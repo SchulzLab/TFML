@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1018</width>
-    <height>849</height>
+    <width>1080</width>
+    <height>783</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -60,6 +60,12 @@
         </property>
         <item>
          <widget class="QTextEdit" name="textEdit">
+          <property name="sizePolicy">
+           <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
+            <horstretch>0</horstretch>
+            <verstretch>0</verstretch>
+           </sizepolicy>
+          </property>
           <property name="readOnly">
            <bool>true</bool>
           </property>
@@ -85,7 +91,7 @@ p, li { white-space: pre-wrap; }
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1018</width>
+     <width>1080</width>
      <height>27</height>
     </rect>
    </property>
@@ -127,22 +133,65 @@ p, li { white-space: pre-wrap; }
       <number>0</number>
      </property>
      <item>
-      <widget class="FileListWidget" name="mFileList" native="true"/>
+      <widget class="FileListWidget" name="mFileList" native="true">
+       <property name="mouseTracking">
+        <bool>false</bool>
+       </property>
+      </widget>
+     </item>
+    </layout>
+   </widget>
+  </widget>
+  <widget class="QDockWidget" name="mDockResult">
+   <property name="minimumSize">
+    <size>
+     <width>300</width>
+     <height>40</height>
+    </size>
+   </property>
+   <property name="allowedAreas">
+    <set>Qt::BottomDockWidgetArea|Qt::LeftDockWidgetArea</set>
+   </property>
+   <property name="windowTitle">
+    <string>ResultList</string>
+   </property>
+   <attribute name="dockWidgetArea">
+    <number>1</number>
+   </attribute>
+   <widget class="QWidget" name="dockWidgetContents">
+    <layout class="QHBoxLayout" name="horizontalLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="leftMargin">
+      <number>0</number>
+     </property>
+     <property name="topMargin">
+      <number>0</number>
+     </property>
+     <property name="rightMargin">
+      <number>0</number>
+     </property>
+     <property name="bottomMargin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="FileListWidget" name="mResultFileList" native="true"/>
      </item>
     </layout>
    </widget>
   </widget>
   <widget class="QDockWidget" name="mBottomDock">
    <property name="sizePolicy">
-    <sizepolicy hsizetype="Maximum" vsizetype="Preferred">
+    <sizepolicy hsizetype="Preferred" vsizetype="Preferred">
      <horstretch>0</horstretch>
      <verstretch>0</verstretch>
     </sizepolicy>
    </property>
    <property name="minimumSize">
     <size>
-     <width>1018</width>
-     <height>120</height>
+     <width>500</width>
+     <height>150</height>
     </size>
    </property>
    <property name="maximumSize">
@@ -187,6 +236,9 @@ p, li { white-space: pre-wrap; }
          <horstretch>0</horstretch>
          <verstretch>0</verstretch>
         </sizepolicy>
+       </property>
+       <property name="mouseTracking">
+        <bool>false</bool>
        </property>
        <property name="autoFillBackground">
         <bool>true</bool>

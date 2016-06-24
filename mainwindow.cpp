@@ -23,7 +23,7 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mUpdateLog( QString, QString ) ), this, SLOT( updateLogText( QString,QString ) ) );
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
     mUi->textEdit->setAlignment(Qt::AlignCenter);
-    setWindowTitle( "Epigenetics analysis" );
+    setWindowTitle( "Epigenetics analysis tool" );
 }
 
 MainWindow::~MainWindow()
@@ -76,7 +76,7 @@ void MainWindow::createToolBar()
 {
     QToolBar *toolBar = mUi->mMainToolBar;
     QAction *addAction = new QAction( tr( "&Add" ), this );
-    QAction *staAction = new QAction( tr( "&Open" ), this );
+    QAction *staAction = new QAction( tr( "&Analze" ), this );
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
     toolBar->addAction( addAction );
@@ -130,7 +130,6 @@ void MainWindow::addDirectory()
     if(fileName != "") {
         qInfo() << "MainWindow::openFile()";
         mList->addDirectory(fileName);
-        //DataManager::getDataManager()->addFile(fileName);
     }
 }
 
@@ -150,8 +149,6 @@ void MainWindow::readFile( QString aFileName )
         }
     }
 
-    QTextEdit *textEdit = new QTextEdit();
-
     QFile file( aFileName );
     if( !file.exists() ){
         qDebug() << "NO existe el archivo "<< aFileName;
@@ -168,6 +165,7 @@ void MainWindow::readFile( QString aFileName )
         readJpg( aFileName );
     }
     else{
+        QTextEdit *textEdit = new QTextEdit();
         QString content;
         textEdit->clear();
         if( file.open( QIODevice::ReadOnly | QIODevice::Text ) ){
@@ -191,8 +189,8 @@ void MainWindow::readFile( QString aFileName )
 
 void MainWindow::updateLogText( QString aStdErr, QString aStdOut )
 {
-    mUi->mLogText->append( aStdOut );
-    mUi->mLogText->append( aStdErr );
+    //mUi->mLogText->append( aStdOut );
+    //mUi->mLogText->append( aStdErr );
 }
 
 void MainWindow::closeTab(int aIndex)
