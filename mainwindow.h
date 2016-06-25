@@ -21,6 +21,7 @@ public:
 
 private slots:
     void addFile();
+    void delFile();
     void addBedFile();
     void peakCalling();
     void readFile( QString fileName );

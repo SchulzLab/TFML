@@ -16,6 +16,7 @@ public:
 
 public slots:
     void addFile( QString path );
+    void delFile();
     void addDirectory( QString path );
     void clickedEvent( QTreeWidgetItem *aItem, int aNumber );
 

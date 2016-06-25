@@ -76,12 +76,25 @@ void MainWindow::createToolBar()
 {
     QToolBar *toolBar = mUi->mMainToolBar;
     QAction *addAction = new QAction( tr( "&Add" ), this );
+    QAction *delAction = new QAction( tr( "&Delete" ), this );
     QAction *staAction = new QAction( tr( "&Analze" ), this );
+    QAction *refreshAction = new QAction( "Refresh", this );
+    QAction *zoominAction = new QAction( "Zoom in", this );
+    QAction *zoomoutAction = new QAction( "Zoom out", this );
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
+    delAction->setIcon( QIcon::fromTheme( "edit-delete" ) );
+    zoominAction->setIcon( QIcon::fromTheme( "zoom-in" ) );
+    zoomoutAction->setIcon( QIcon::fromTheme( "zoom-out" ) );
+    refreshAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
     toolBar->addAction( addAction );
+    toolBar->addAction( delAction );
+    toolBar->addAction( refreshAction );
     toolBar->addAction( staAction );
+    toolBar->addAction( zoominAction );
+    toolBar->addAction( zoomoutAction );
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
+    connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
 }
 
@@ -109,6 +122,15 @@ void MainWindow::addFile()
     if( fileName != "" ) {
         qInfo() << "MainWindow::openFile()";
         mList->addDirectory( fileName );
+    }
+}
+
+void MainWindow::delFile()
+{
+    QTreeWidgetItem *item = mList->getCurrentItem();
+    if( item != NULL ){
+        qInfo() << "MainWindow::delFile()";
+        mList->delFile();
     }
 }
 
@@ -182,6 +204,7 @@ void MainWindow::readFile( QString aFileName )
         QString fileName = names.value( names.length() - 1 );
         mUi->mTabWidget->addTab( textEdit, fileName );
         mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+        //textEdit->sets
         textEdit->setReadOnly( true );
         textEdit->setTextInteractionFlags( Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard );
     }

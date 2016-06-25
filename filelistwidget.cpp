@@ -39,6 +39,7 @@ QFileInfoList FileListWidget::allfile( QTreeWidgetItem *aRoot, QString aPath )
         QString pathName = fileInfo.absoluteFilePath();
         qInfo() << fileInfo.absoluteFilePath() << fileInfo.fileName();
         QTreeWidgetItem* child = new QTreeWidgetItem( QStringList() << fileName << pathName );
+        child->setToolTip( 0, pathName );
         child->setCheckState( 1, Qt::Checked );
         aRoot->addChild( child );
     }
@@ -53,6 +54,7 @@ QFileInfoList FileListWidget::allfile( QTreeWidgetItem *aRoot, QString aPath )
          QString fileName = folderInfo.fileName();
 
          QTreeWidgetItem* childRoot = new QTreeWidgetItem( QStringList() << fileName );
+         childRoot->setToolTip( 0, pathName );
          //childroot->setIcon(0, QIcon("./Resources/images/file.png"));
          childRoot->setCheckState( 1, Qt::Checked );
          aRoot->addChild( childRoot );
@@ -74,6 +76,7 @@ void FileListWidget::addDirectory( QString aPath )
         {
             qInfo() << " FileListWidget::addDirectory";
             QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList( aPath ) );
+            root->setToolTip( 0, aPath );
             allfile( root, aPath );
         }
         else if( s.st_mode & S_IFREG )
@@ -82,6 +85,7 @@ void FileListWidget::addDirectory( QString aPath )
             QStringList path = aPath.split("/");
             QString name = path[ path.length() - 1 ];
             QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
+            root->setToolTip( 1, aPath );
         }
     }
 }
@@ -90,6 +94,12 @@ void FileListWidget::addFile( QString aPath )
 {
 
 }
+
+void FileListWidget::delFile()
+{
+    qDeleteAll(mTree->selectedItems());
+}
+
 
 QTreeWidgetItem* FileListWidget::getCurrentItem()
 {
