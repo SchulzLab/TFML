@@ -1,3 +1,12 @@
+/*********************************************************************
+*
+*   MODULE NAME:
+*       peakcallingdialog.cpp
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #include "peakcallingdialog.h"
 #include "analysismanager.h"
 #include <iostream>

@@ -1,5 +1,15 @@
+/*********************************************************************
+*
+*   HEADER NAME:
+*       peakcallingdialog.h
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #ifndef PEAKCALLINGDIALOG_H
 #define PEAKCALLINGDIALOG_H
+
 #include <QtWidgets>
 #include <QtSql>
 #include <QtXml>

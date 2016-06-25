@@ -1,3 +1,12 @@
+/*********************************************************************
+*
+*   HEADER NAME:
+*       bedfiledata.h
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #ifndef BEDFILEDATA_H
 #define BEDFILEDATA_H
 

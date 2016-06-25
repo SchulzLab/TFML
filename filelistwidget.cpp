@@ -1,3 +1,12 @@
+/*********************************************************************
+*
+*   MODULE NAME:
+*       filelistwidget.cpp
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #include "filelistwidget.h"
 #include "analysismanager.h"
 #include "datamanager.h"
@@ -5,7 +14,13 @@
 
 #define COLUMN_COUNT 1
 
-FileListWidget::FileListWidget(QWidget *widget)
+//---------------------------------------------------------------------------------
+//! Constructor
+//---------------------------------------------------------------------------------
+FileListWidget::FileListWidget
+    (
+    QWidget *widget
+    )
 {
     QVBoxLayout *layout = new QVBoxLayout();
     mTree = new QTreeWidget( this );
@@ -22,9 +37,16 @@ FileListWidget::FileListWidget(QWidget *widget)
     setLayout( layout );
 
     connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
-}
+} // end of function FileListWidget::FileListWidget()
 
-QFileInfoList FileListWidget::allfile( QTreeWidgetItem *aRoot, QString aPath )
+//---------------------------------------------------------------------------------
+//! Add all files and sub-directories
+//---------------------------------------------------------------------------------
+QFileInfoList FileListWidget::allfile
+    (
+    QTreeWidgetItem *aRoot,
+    QString aPath
+    )
 {
     QDir dir( aPath );
     QDir dirFile( aPath );
@@ -63,9 +85,15 @@ QFileInfoList FileListWidget::allfile( QTreeWidgetItem *aRoot, QString aPath )
          fileList.append( fileName );
     }
     return fileList;
-}
+} // end of function FileListWidget::allfile()
 
-void FileListWidget::addDirectory( QString aPath )
+//---------------------------------------------------------------------------------
+//! Add file or directory
+//---------------------------------------------------------------------------------
+void FileListWidget::addDirectory
+    (
+    QString aPath
+    )
 {
     struct stat s;
     QByteArray array = aPath.toLocal8Bit();
@@ -82,35 +110,42 @@ void FileListWidget::addDirectory( QString aPath )
         else if( s.st_mode & S_IFREG )
         {
             qInfo() << " FileListWidget::addFile";
-            QStringList path = aPath.split("/");
+            QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
             QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
             root->setToolTip( 1, aPath );
         }
     }
-}
+} // end of function FileListWidget::addDirectory()
 
-void FileListWidget::addFile( QString aPath )
-{
-
-}
-
+//---------------------------------------------------------------------------------
+//! Delete file or directory
+//---------------------------------------------------------------------------------
 void FileListWidget::delFile()
 {
     qDeleteAll(mTree->selectedItems());
-}
+} // end of function FileListWidget::delFile()
 
-
+//---------------------------------------------------------------------------------
+//! Get current item in filelist
+//---------------------------------------------------------------------------------
 QTreeWidgetItem* FileListWidget::getCurrentItem()
 {
    return mTree->currentItem();
-}
+} // end of function FileListWidget::getCurrentItem()
 
-void FileListWidget::clickedEvent( QTreeWidgetItem *aItem, int aNumber )
+//---------------------------------------------------------------------------------
+//! Handel double click event
+//---------------------------------------------------------------------------------
+void FileListWidget::clickedEvent
+    (
+    QTreeWidgetItem *aItem,
+    int aNumber
+    )
 {
     QString fileName = aItem->text( 1 );
     qInfo() << fileName;
     if( !fileName.isEmpty() ){
         readFile( fileName );
     }
-}
+} // end of function FileListWidget::clickedEvent()

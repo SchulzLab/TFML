@@ -1,6 +1,14 @@
+/*********************************************************************
+*
+*   MODULE NAME:
+*       mainwindow.cpp
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #include "mainwindow.h"
 #include "ui_mainwindow.h"
-#include "filedialog.h"
 #include "peakcallingdialog.h"
 #include <iostream>
 #include <string>
@@ -10,9 +18,15 @@
 
 using namespace std;
 
-MainWindow::MainWindow(QWidget *parent) :
-    QMainWindow(parent),
-    mUi(new Ui::MainWindow)
+//---------------------------------------------------------------------------------
+//! Constructor
+//---------------------------------------------------------------------------------
+MainWindow::MainWindow
+    (
+    QWidget *parent
+    )
+    : QMainWindow( parent )
+    , mUi( new Ui::MainWindow )
 {
     qInfo() << "MainWindow::MainWindow()";
     mUi->setupUi( this );
@@ -24,14 +38,16 @@ MainWindow::MainWindow(QWidget *parent) :
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
     mUi->textEdit->setAlignment(Qt::AlignCenter);
     setWindowTitle( "Epigenetics analysis tool" );
-}
+} // end of function MainWindow::MainWindow()
 
 MainWindow::~MainWindow()
 {
     delete mUi;
-}
+} // end of function MainWindow::~MainWindow()
 
-
+//---------------------------------------------------------------------------------
+//! Create menu bar and init menu item
+//---------------------------------------------------------------------------------
 void MainWindow::createMenuBar()
 {
     QAction *addAction = new QAction( tr( "&Open file" ), this );
@@ -70,50 +86,57 @@ void MainWindow::createMenuBar()
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(aboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
     */
-}
+} // end of function MainWindow::createMenuBar()
 
+//---------------------------------------------------------------------------------
+//! Create tool bar and init tool
+//---------------------------------------------------------------------------------
 void MainWindow::createToolBar()
 {
     QToolBar *toolBar = mUi->mMainToolBar;
+
     QAction *addAction = new QAction( tr( "&Add" ), this );
     QAction *delAction = new QAction( tr( "&Delete" ), this );
     QAction *staAction = new QAction( tr( "&Analze" ), this );
     QAction *refreshAction = new QAction( "Refresh", this );
     QAction *zoominAction = new QAction( "Zoom in", this );
     QAction *zoomoutAction = new QAction( "Zoom out", this );
+
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     delAction->setIcon( QIcon::fromTheme( "edit-delete" ) );
     zoominAction->setIcon( QIcon::fromTheme( "zoom-in" ) );
     zoomoutAction->setIcon( QIcon::fromTheme( "zoom-out" ) );
     refreshAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
+
     toolBar->addAction( addAction );
     toolBar->addAction( delAction );
     toolBar->addAction( refreshAction );
     toolBar->addAction( staAction );
     toolBar->addAction( zoominAction );
     toolBar->addAction( zoomoutAction );
+
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
-}
 
-void MainWindow::createAnalysisDock()
-{
-    mDockRight = new QDockWidget( tr( "Analysis Tools" ), this );
-    mDockRight->setMinimumWidth( 300 );
-    addDockWidget( Qt::RightDockWidgetArea, mDockRight );
-}
+} // end of function MainWindow::createToolBar()
 
+//---------------------------------------------------------------------------------
+//! Create file list dock
+//---------------------------------------------------------------------------------
 void MainWindow::createFileListDock()
 {
     mList = mUi->mFileList;
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), mList, SLOT( addDirectory( QString ) ) );
-    //connect( AnalysisManager::getAnalysisManager(), SIGNAL( receiveFinished( QString ) ), mList, SLOT( addDirectory( QString ) ) );
     connect( mList, SIGNAL( readFile( QString ) ), this, SLOT(readFile(QString)));
     mUi->mDockLeft->setWidget( mList );
-}
 
+} // end of function MainWindow::createFileListDock()
+
+//---------------------------------------------------------------------------------
+//! Create dialog to add file
+//---------------------------------------------------------------------------------
 void MainWindow::addFile()
 {
     std::cout << QDir::currentPath().toStdString() << endl;
@@ -123,8 +146,12 @@ void MainWindow::addFile()
         qInfo() << "MainWindow::openFile()";
         mList->addDirectory( fileName );
     }
-}
 
+} // end of function MainWindow::addFile()
+
+//---------------------------------------------------------------------------------
+//! Delete file in the file list
+//---------------------------------------------------------------------------------
 void MainWindow::delFile()
 {
     QTreeWidgetItem *item = mList->getCurrentItem();
@@ -132,8 +159,12 @@ void MainWindow::delFile()
         qInfo() << "MainWindow::delFile()";
         mList->delFile();
     }
-}
 
+} // end of function MainWindow::delFile()
+
+//---------------------------------------------------------------------------------
+//! Create dialog to add bed file
+//---------------------------------------------------------------------------------
 void MainWindow::addBedFile()
 {
     std::cout << QDir::currentPath().toStdString() << endl;
@@ -143,25 +174,37 @@ void MainWindow::addBedFile()
         qInfo() << "MainWindow::openBedFile()";
         mList->addDirectory( fileName );
     }
-}
+} // end of function MainWindow::addBedFile()
 
+//---------------------------------------------------------------------------------
+//! Create dialog to add directory
+//---------------------------------------------------------------------------------
 void MainWindow::addDirectory()
 {
-    QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "/home",QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
     if(fileName != "") {
         qInfo() << "MainWindow::openFile()";
-        mList->addDirectory(fileName);
+        mList->addDirectory( fileName );
     }
-}
+} // end of function MainWindow::addDirectory()
 
+//---------------------------------------------------------------------------------
+//! Create peak calling dialog
+//---------------------------------------------------------------------------------
 void MainWindow::peakCalling()
 {
     PeakCallingDialog *dialog = new PeakCallingDialog();
     dialog->exec();
-}
+} // end of function MainWindow::peakCalling()
 
-void MainWindow::readFile( QString aFileName )
+//---------------------------------------------------------------------------------
+//! Read file in the file list
+//---------------------------------------------------------------------------------
+void MainWindow::readFile
+    (
+    QString aFileName
+    )
 {
     //Check if the file already open
     for( int k = 0; k < mUi->mTabWidget->count(); k++ ) {
@@ -208,28 +251,51 @@ void MainWindow::readFile( QString aFileName )
         textEdit->setReadOnly( true );
         textEdit->setTextInteractionFlags( Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard );
     }
-}
+} // end of function MainWindow::readFile()
 
-void MainWindow::updateLogText( QString aStdErr, QString aStdOut )
+//---------------------------------------------------------------------------------
+//! Update log text
+//---------------------------------------------------------------------------------
+void MainWindow::updateLogText
+    (
+    QString aStdErr,
+    QString aStdOut
+    )
 {
-    //mUi->mLogText->append( aStdOut );
-    //mUi->mLogText->append( aStdErr );
-}
+    mUi->mLogText->append( aStdOut );
+    mUi->mLogText->append( aStdErr );
+} // end of function MainWindow::updateLogText()
 
-void MainWindow::closeTab(int aIndex)
+//---------------------------------------------------------------------------------
+//! Close tab in tab widget
+//---------------------------------------------------------------------------------
+void MainWindow::closeTab
+    (
+    int aIndex
+    )
 {
     mUi->mTabWidget->removeTab( aIndex );
-}
+} // end of function MainWindow::closeTab()
 
+//---------------------------------------------------------------------------------
+//! Analyze file and output pic and statstic data file
+//---------------------------------------------------------------------------------
 void MainWindow::analyzeFile()
 {
     QTreeWidgetItem *item = mList->getCurrentItem();
     if( item != NULL ){
         AnalysisManager::getAnalysisManager()->analyseBedFile( item->text( 1 ) );
     }
-}
+} // end of function MainWindow::analyzeFile()
 
-void MainWindow::readJpg( QString aFileName ){
+//---------------------------------------------------------------------------------
+//! Read jpg file
+//---------------------------------------------------------------------------------
+void MainWindow::readJpg
+    (
+    QString aFileName
+    )
+{
 
     qInfo() << "loading jpg";
     QLabel *label = new QLabel();
@@ -244,4 +310,4 @@ void MainWindow::readJpg( QString aFileName ){
     QString fileName = names.value( names.length() - 1 );
     mUi->mTabWidget->addTab( area, fileName );
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
-}
+} // end of function MainWindow::readJpg()

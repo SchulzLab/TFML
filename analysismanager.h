@@ -1,5 +1,15 @@
+/*********************************************************************
+*
+*   HEADER NAME:
+*       analysismanager.h
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #ifndef ANALYSISMANAGER_H
 #define ANALYSISMANAGER_H
+
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QtSql>

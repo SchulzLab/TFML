@@ -16,22 +16,18 @@ QT += xml widgets
 SOURCES += main.cpp\
         mainwindow.cpp \
     dialog.cpp \
-    filedialog.cpp \
     datamanager.cpp \
     filelistwidget.cpp \
     bedfiledata.cpp \
     analysismanager.cpp \
-    peakcallingdialog.cpp \
-    treewidget.cpp
+    peakcallingdialog.cpp
 
 HEADERS  += mainwindow.h \
     dialog.h \
-    filedialog.h \
     datamanager.h \
     filelistwidget.h \
     bedfiledata.h \
     analysismanager.h \
-    peakcallingdialog.h \
-    treewidget.h
+    peakcallingdialog.h
 
 FORMS    += mainwindow.ui

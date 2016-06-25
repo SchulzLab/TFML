@@ -1,6 +1,17 @@
+/*********************************************************************
+*
+*   HEADER NAME:
+*       datamanager.h
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #ifndef DATAMANAGER_H
 #define DATAMANAGER_H
+
 #include <QMainWindow>
+
 using namespace std;
 
 class DataManager

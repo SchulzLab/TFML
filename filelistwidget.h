@@ -1,5 +1,15 @@
+/*********************************************************************
+*
+*   HEADER NAME:
+*       filelistwidget.h
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #ifndef FILELISTWIDGET_H
 #define FILELISTWIDGET_H
+
 #include <QtWidgets>
 #include <QWidget>
 #include <QHBoxLayout>
@@ -15,7 +25,6 @@ public:
     QTreeWidgetItem *getCurrentItem();
 
 public slots:
-    void addFile( QString path );
     void delFile();
     void addDirectory( QString path );
     void clickedEvent( QTreeWidgetItem *aItem, int aNumber );

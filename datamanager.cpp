@@ -1,3 +1,12 @@
+/*********************************************************************
+*
+*   MODULE NAME:
+*       datamanager.cpp
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #include "datamanager.h"
 #include "ui_mainwindow.h"
 #include <iostream>

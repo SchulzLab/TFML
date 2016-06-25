@@ -1,3 +1,12 @@
+/*********************************************************************
+*
+*   MODULE NAME:
+*       main.cpp
+*
+* Copyright 2016 by Tzung-Chien Hsieh.
+*
+*********************************************************************/
+
 #include "mainwindow.h"
 #include <QApplication>
 #include "treewidget.h"
