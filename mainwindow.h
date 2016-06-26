@@ -56,8 +56,7 @@ private slots:
 
     void updateLogText
         (
-        QString aStdErr,
-        QString aStdOut
+        QString aLog
         );
 
     void closeTab

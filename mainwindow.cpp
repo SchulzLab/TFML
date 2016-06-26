@@ -13,7 +13,6 @@
 #include <iostream>
 #include <string>
 #include "datamanager.h"
-#include "treewidget.h"
 #include "analysismanager.h"
 
 using namespace std;
@@ -34,7 +33,7 @@ MainWindow::MainWindow
     createFileListDock();
     createToolBar();
     //createAnalysisDock();
-    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mUpdateLog( QString, QString ) ), this, SLOT( updateLogText( QString,QString ) ) );
+    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mUpdateLog( QString ) ), this, SLOT( updateLogText( QString ) ) );
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
     mUi->textEdit->setAlignment(Qt::AlignCenter);
     setWindowTitle( "Epigenetics analysis tool" );
@@ -101,6 +100,7 @@ void MainWindow::createToolBar()
     QAction *refreshAction = new QAction( "Refresh", this );
     QAction *zoominAction = new QAction( "Zoom in", this );
     QAction *zoomoutAction = new QAction( "Zoom out", this );
+    QAction *stopAction = new QAction( "Stop", this );
 
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     delAction->setIcon( QIcon::fromTheme( "edit-delete" ) );
@@ -108,6 +108,7 @@ void MainWindow::createToolBar()
     zoomoutAction->setIcon( QIcon::fromTheme( "zoom-out" ) );
     refreshAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
+    stopAction->setIcon( QIcon::fromTheme( "process-stop" ) );
 
     toolBar->addAction( addAction );
     toolBar->addAction( delAction );
@@ -115,10 +116,12 @@ void MainWindow::createToolBar()
     toolBar->addAction( staAction );
     toolBar->addAction( zoominAction );
     toolBar->addAction( zoomoutAction );
+    toolBar->addAction( stopAction );
 
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
+    connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
 
 } // end of function MainWindow::createToolBar()
 
@@ -258,12 +261,10 @@ void MainWindow::readFile
 //---------------------------------------------------------------------------------
 void MainWindow::updateLogText
     (
-    QString aStdErr,
-    QString aStdOut
+    QString aLog
     )
 {
-    mUi->mLogText->append( aStdOut );
-    mUi->mLogText->append( aStdErr );
+    mUi->mLogText->append( aLog );
 } // end of function MainWindow::updateLogText()
 
 //---------------------------------------------------------------------------------

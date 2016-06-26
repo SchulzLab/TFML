@@ -18,22 +18,61 @@
 class AnalysisManager : public QObject
 {
     Q_OBJECT
+
+//----------------------------------------------------------------
+// Functions
+//----------------------------------------------------------------
 public:
     static AnalysisManager* getAnalysisManager();
+
     ~AnalysisManager();
-    void peakCalling(QString sampleDirectory, QString genomeFile, QString outputPath);
-    void analyseBedFile( QString aFilePath );
 
-public slots:
-    void updateText();
-    void receiveFinished(int aCode, QProcess::ExitStatus aStatus);
+    void peakCalling
+        (
+        QString aCmd,
+        QString aOutputPath
+        );
 
-signals:
-    void mProcessOutputDone(QString path);
-    void mUpdateLog(QString aStdOut, QString aStdErr);
+    void analyseBedFile
+        (
+        QString aFilePath
+        );
 
 private:
     AnalysisManager();
+
+//----------------------------------------------------------------
+// Slots
+//----------------------------------------------------------------
+public slots:
+    void updateText();
+
+    void receiveFinished
+        (
+        int aCode,
+        QProcess::ExitStatus aStatus
+        );
+
+    void killProcess();
+
+//----------------------------------------------------------------
+// Signals
+//----------------------------------------------------------------
+signals:
+    void mProcessOutputDone
+        (
+        QString aPath
+        );
+
+    void mUpdateLog
+        (
+        QString aLog
+        );
+
+//----------------------------------------------------------------
+// Variables
+//----------------------------------------------------------------
+private:
     QProcess *mProcess;
     QMessageBox *mResultBox;
     QString mOutputPath;

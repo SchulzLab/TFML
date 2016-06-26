@@ -9,7 +9,6 @@
 
 #include "mainwindow.h"
 #include <QApplication>
-#include "treewidget.h"
 
 int main(int argc, char *argv[])
 {
