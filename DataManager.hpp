@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       datamanager.h
+*       DataManager.h
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       bedfiledata.h
+*       BedFileData.hpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

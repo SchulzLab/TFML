@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       main.cpp
+*       Main.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

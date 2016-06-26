@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       analysismanager.cpp
+*       AnalysisManager.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
@@ -105,7 +105,7 @@ void AnalysisManager::analyseBedFile
     cout << mOutputPath.toStdString() << endl;
     mProcess->start( cmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
-    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ) );
+    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 } // end of function AnalysisManager::analyzeBedFile()
 
 //---------------------------------------------------------------------------------

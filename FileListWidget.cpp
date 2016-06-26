@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       filelistwidget.cpp
+*       FileListWidget.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
@@ -71,8 +71,8 @@ QFileInfoList FileListWidget::allfile
 
     for( int i = 0; i != folderList.size(); i++ )
     {
-         QString pathName = folderList.at(i).absoluteFilePath();
-         QFileInfo folderInfo = folderList.at(i);
+         QString pathName = folderList.at( i ).absoluteFilePath();
+         QFileInfo folderInfo = folderList.at( i );
          QString fileName = folderInfo.fileName();
 
          QTreeWidgetItem* childRoot = new QTreeWidgetItem( QStringList() << fileName );
@@ -103,7 +103,9 @@ void FileListWidget::addDirectory
         if( s.st_mode & S_IFDIR )
         {
             qInfo() << " FileListWidget::addDirectory";
-            QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList( aPath ) );
+            QStringList path = aPath.split( "/" );
+            QString name = path[ path.length() - 1 ];
+            QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
             root->setToolTip( 0, aPath );
             allfile( root, aPath );
         }

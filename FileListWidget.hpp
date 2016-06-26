@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       filelistwidget.h
+*       FileListWidget.hpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

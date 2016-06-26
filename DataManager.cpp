@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       datamanager.cpp
+*       DataManager.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

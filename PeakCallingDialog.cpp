@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       peakcallingdialog.cpp
+*       PeakCallingDialog.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
@@ -13,6 +13,9 @@
 
 using namespace std;
 
+//---------------------------------------------------------------------------------
+//! Constructor
+//---------------------------------------------------------------------------------
 PeakCallingDialog::PeakCallingDialog
     (
     QWidget *parent
@@ -33,8 +36,11 @@ PeakCallingDialog::PeakCallingDialog
     setLayout( layout );
 
     setWindowTitle( "Peak Calling" );
-}
+} // end of function PeakCallingDialog::PeakCallingDialog()
 
+//---------------------------------------------------------------------------------
+//! Create basic input widgets
+//---------------------------------------------------------------------------------
 QGroupBox *PeakCallingDialog::createInputWidgets()
 {
     QGroupBox *box = new QGroupBox( "Peak Calling" );
@@ -73,8 +79,11 @@ QGroupBox *PeakCallingDialog::createInputWidgets()
     box->setLayout( layout );
 
     return box;
-}
+} // end of function PeakCallingDialog::createInputWidgets()
 
+//---------------------------------------------------------------------------------
+//! Create extended input widgets
+//---------------------------------------------------------------------------------
 QGroupBox *PeakCallingDialog::createExtendInputWidgets()
 {
     QGroupBox *extension = new QGroupBox();
@@ -165,8 +174,11 @@ QGroupBox *PeakCallingDialog::createExtendInputWidgets()
     extension->setLayout( extendLayout );
 
     return extension;
-}
+} // end of function PeakCallingDialog::createExtendInputWidgets()
 
+//---------------------------------------------------------------------------------
+//! Create buttons
+//---------------------------------------------------------------------------------
 QDialogButtonBox *PeakCallingDialog::createButtons()
 {
     QPushButton *cancelButton = new QPushButton( tr( "&Cancel" ) );
@@ -181,8 +193,11 @@ QDialogButtonBox *PeakCallingDialog::createButtons()
     buttonBox->addButton( cancelButton, QDialogButtonBox::RejectRole );
 
     return buttonBox;
-}
+} // end of function PeakCallingDialog::createButtons()
 
+//---------------------------------------------------------------------------------
+//! Handle click directory
+//---------------------------------------------------------------------------------
 void PeakCallingDialog::selectDirectory()
 {
     QObject *senderObj = sender(); // This will give Sender object
@@ -198,18 +213,24 @@ void PeakCallingDialog::selectDirectory()
     }
 
     QFileDialog *dialog = new QFileDialog();
-    QString directoryName = dialog->getExistingDirectory(this,tr("select file"), "/home", QFileDialog::ShowDirsOnly
-                                               | QFileDialog::DontResolveSymlinks);
+    QString directoryName = dialog->getExistingDirectory( this, tr( "select file" ), "/home", QFileDialog::ShowDirsOnly
+                                               | QFileDialog::DontResolveSymlinks );
     edit->setText( directoryName );
-}
+} // end of function PeakCallingDialog::selectDirectory()
 
+//---------------------------------------------------------------------------------
+//! Handle click select file
+//---------------------------------------------------------------------------------
 void PeakCallingDialog::selectFile()
 {
     QFileDialog *dialog = new QFileDialog();
     QString fileName = dialog->getOpenFileName( this, "select file" );
     mGenomeEditor->setText( fileName );
-}
+} // end of function PeakCallingDialog::selectFile()
 
+//---------------------------------------------------------------------------------
+//! Handle click ok
+//---------------------------------------------------------------------------------
 void PeakCallingDialog::ok()
 {
     if( mSampleEditor->text().isEmpty() || mGenomeEditor->text().isEmpty() || mOutputEditor->text().isEmpty()) {
@@ -257,4 +278,4 @@ void PeakCallingDialog::ok()
         accept();
         AnalysisManager::getAnalysisManager()->peakCalling( cmd, mOutputEditor->text() );
     }
-}
+} // end of function PeakCallingDialog::ok()

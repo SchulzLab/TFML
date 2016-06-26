@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       bedfiledata.cpp
+*       BedFileData.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

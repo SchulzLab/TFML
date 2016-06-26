@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       dialog.cpp
+*       Dialog.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

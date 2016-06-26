@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       mainwindow.cpp
+*       MainWindow.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
@@ -94,15 +94,17 @@ void MainWindow::createToolBar()
 {
     QToolBar *toolBar = mUi->mMainToolBar;
 
-    QAction *addAction = new QAction( tr( "&Add" ), this );
-    QAction *delAction = new QAction( tr( "&Delete" ), this );
-    QAction *staAction = new QAction( tr( "&Analze" ), this );
+    QAction *addAction = new QAction( "Add file", this );
+    QAction *addDirectoryAction = new QAction( "Add directory", this );
+    QAction *delAction = new QAction( "Delete", this );
+    QAction *staAction = new QAction( "Analyze", this );
     QAction *refreshAction = new QAction( "Refresh", this );
     QAction *zoominAction = new QAction( "Zoom in", this );
     QAction *zoomoutAction = new QAction( "Zoom out", this );
     QAction *stopAction = new QAction( "Stop", this );
 
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
+    addDirectoryAction->setIcon( QIcon::fromTheme( "folder-open" ) );
     delAction->setIcon( QIcon::fromTheme( "edit-delete" ) );
     zoominAction->setIcon( QIcon::fromTheme( "zoom-in" ) );
     zoomoutAction->setIcon( QIcon::fromTheme( "zoom-out" ) );
@@ -111,6 +113,7 @@ void MainWindow::createToolBar()
     stopAction->setIcon( QIcon::fromTheme( "process-stop" ) );
 
     toolBar->addAction( addAction );
+    toolBar->addAction( addDirectoryAction );
     toolBar->addAction( delAction );
     toolBar->addAction( refreshAction );
     toolBar->addAction( staAction );
@@ -119,6 +122,7 @@ void MainWindow::createToolBar()
     toolBar->addAction( stopAction );
 
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
+    connect( addDirectoryAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
     connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
     connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
@@ -131,8 +135,10 @@ void MainWindow::createToolBar()
 void MainWindow::createFileListDock()
 {
     mList = mUi->mFileList;
-    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), mList, SLOT( addDirectory( QString ) ) );
-    connect( mList, SIGNAL( readFile( QString ) ), this, SLOT(readFile(QString)));
+    mResultList = mUi->mResultFileList;
+    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), mResultList, SLOT( addDirectory( QString ) ) );
+    connect( mList, SIGNAL( readFile( QString ) ), this, SLOT( readFile( QString ) ) );
+    connect( mResultList, SIGNAL( readFile( QString ) ), this, SLOT( readFile( QString ) ) );
     mUi->mDockLeft->setWidget( mList );
 
 } // end of function MainWindow::createFileListDock()
@@ -184,9 +190,9 @@ void MainWindow::addBedFile()
 //---------------------------------------------------------------------------------
 void MainWindow::addDirectory()
 {
-    QString fileName = QFileDialog::getExistingDirectory(this, tr("Open Directory"), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
+    QString fileName = QFileDialog::getExistingDirectory( this, tr( "Open Directory" ), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
-    if(fileName != "") {
+    if( fileName != "" ) {
         qInfo() << "MainWindow::openFile()";
         mList->addDirectory( fileName );
     }

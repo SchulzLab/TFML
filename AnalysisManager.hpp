@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       analysismanager.h
+*       AnalysisManager.hpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *

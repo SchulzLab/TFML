@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       mainwindow.hpp
+*       MainWindow.hpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
@@ -89,6 +89,7 @@ private:
 private:
     Ui::MainWindow *mUi;
     FileListWidget *mList;
+    FileListWidget *mResultList;
     QDockWidget *mDockLeft;
     QDockWidget *mDockRight;
 

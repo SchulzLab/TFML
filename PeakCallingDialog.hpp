@@ -1,7 +1,7 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       peakcallingdialog.h
+*       PeakCallingDialog.hpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
