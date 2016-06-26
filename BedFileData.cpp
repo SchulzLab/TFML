@@ -1,20 +1,15 @@
 /*********************************************************************
 *
 *   MODULE NAME:
-*       main.cpp
+*       bedfiledata.cpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
 *********************************************************************/
 
-#include "mainwindow.h"
-#include <QApplication>
+#include "BedFileData.hpp"
 
-int main(int argc, char *argv[])
+BedFileData::BedFileData()
 {
-    QApplication app(argc, argv);
-    MainWindow window;
-    window.showMaximized();
 
-    return app.exec();
 }

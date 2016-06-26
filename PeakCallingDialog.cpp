@@ -7,8 +7,8 @@
 *
 *********************************************************************/
 
-#include "peakcallingdialog.h"
-#include "analysismanager.h"
+#include "PeakCallingDialog.hpp"
+#include "AnalysisManager.hpp"
 #include <iostream>
 
 using namespace std;

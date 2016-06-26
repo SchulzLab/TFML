@@ -13,21 +13,21 @@ TEMPLATE = app
 QT += sql widgets
 QT += xml widgets
 
-SOURCES += main.cpp\
-        mainwindow.cpp \
-    dialog.cpp \
-    datamanager.cpp \
-    filelistwidget.cpp \
-    bedfiledata.cpp \
-    analysismanager.cpp \
-    peakcallingdialog.cpp
+SOURCES += Main.cpp\
+        MainWindow.cpp \
+    Dialog.cpp \
+    DataManager.cpp \
+    FileListWidget.cpp \
+    BedFileData.cpp \
+    AnalysisManager.cpp \
+    PeakCallingDialog.cpp
 
-HEADERS  += mainwindow.h \
-    dialog.h \
-    datamanager.h \
-    filelistwidget.h \
-    bedfiledata.h \
-    analysismanager.h \
-    peakcallingdialog.h
+HEADERS  += MainWindow.hpp \
+    Dialog.hpp \
+    DataManager.hpp \
+    FileListWidget.hpp \
+    BedFileData.hpp \
+    AnalysisManager.hpp \
+    PeakCallingDialog.hpp
 
-FORMS    += mainwindow.ui
+FORMS    += MainWindow.ui

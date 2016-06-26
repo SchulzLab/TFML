@@ -11,7 +11,7 @@
 #define MAINWINDOW_H
 
 #include <QMainWindow>
-#include "filelistwidget.h"
+#include "FileListWidget.hpp"
 #include <QtWidgets>
 #include <string>
 #include <iostream>

@@ -7,13 +7,13 @@
 *
 *********************************************************************/
 
-#include "mainwindow.h"
+#include "MainWindow.hpp"
 #include "ui_mainwindow.h"
-#include "peakcallingdialog.h"
+#include "PeakCallingDialog.hpp"
 #include <iostream>
 #include <string>
-#include "datamanager.h"
-#include "analysismanager.h"
+#include "DataManager.hpp"
+#include "AnalysisManager.hpp"
 
 using namespace std;
 

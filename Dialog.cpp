@@ -7,7 +7,7 @@
 *
 *********************************************************************/
 
-#include "dialog.h"
+#include "Dialog.hpp"
 
 int uniqueAlbumId;
 int uniqueArtistId;

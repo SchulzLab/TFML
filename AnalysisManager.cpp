@@ -7,14 +7,14 @@
 *
 *********************************************************************/
 
-#include "analysismanager.h"
+#include "AnalysisManager.hpp"
 #include <iostream>
 #include <string>
 #include <QMainWindow>
 #include <QtWidgets>
 #include <QtSql>
 #include <QtXml>
-#include "datamanager.h"
+#include "DataManager.hpp"
 
 using namespace std;
 

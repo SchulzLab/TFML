@@ -7,9 +7,9 @@
 *
 *********************************************************************/
 
-#include "filelistwidget.h"
-#include "analysismanager.h"
-#include "datamanager.h"
+#include "FileListWidget.hpp"
+#include "AnalysisManager.hpp"
+#include "DataManager.hpp"
 #include <sys/stat.h>
 
 #define COLUMN_COUNT 1

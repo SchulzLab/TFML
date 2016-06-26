@@ -254,7 +254,7 @@ p, li { white-space: pre-wrap; }
   <customwidget>
    <class>FileListWidget</class>
    <extends>QWidget</extends>
-   <header>filelistwidget.h</header>
+   <header>FileListWidget.hpp</header>
    <container>1</container>
   </customwidget>
  </customwidgets>

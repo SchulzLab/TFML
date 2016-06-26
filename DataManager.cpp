@@ -7,7 +7,7 @@
 *
 *********************************************************************/
 
-#include "datamanager.h"
+#include "DataManager.hpp"
 #include "ui_mainwindow.h"
 #include <iostream>
 #include <string>
@@ -16,7 +16,7 @@
 #include <QtSql>
 #include <QtXml>
 #include <qfileinfo.h>
-#include "analysismanager.h"
+#include "AnalysisManager.hpp"
 #include <qfile.h>
 #include <qfileinfo.h>
 
