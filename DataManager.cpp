@@ -74,6 +74,53 @@ void DataManager::getFilePath()
 
 }
 
+//---------------------------------------------------------------------------------
+//! Check project dir and create if project dir not exist
+//---------------------------------------------------------------------------------
+void DataManager::checkProjectDir()
+{
+    QString home = QDir().homePath();
+    mProjectDir = home + "/Epigenetics_project";
+
+    if( !QDir( mProjectDir ).exists() )
+    {
+        QDir().mkpath( mProjectDir );
+    }
+} // end of function DataManager::checkProjectDir()
+
+//---------------------------------------------------------------------------------
+//! Check Log dir and create if log dir not exist
+//---------------------------------------------------------------------------------
+void DataManager::checkLogDir()
+{
+    mLogDir = mProjectDir + "/Log";
+    if( !QDir( mLogDir ).exists() )
+    {
+        QDir().mkpath( mLogDir );
+    }
+
+} // end of function DataManager::checkLogDir()
+
+//---------------------------------------------------------------------------------
+//! Save log file
+//---------------------------------------------------------------------------------
+void DataManager::saveLog
+    (
+    QString aLog
+    )
+{
+    checkProjectDir();
+    checkLogDir();
+    QDateTime dateTime = QDateTime().currentDateTime();
+    QString dateTimeString = dateTime.toString( "yyyy-MM-dd-hh-mm-ss" );
+    QString fileName = mLogDir + "/Log-" + dateTimeString + ".txt";
+    QFile file( fileName );
+    file.open( QIODevice::WriteOnly );
+    QDataStream out( &file );
+    out << aLog;
+    file.close();
+} // end of function DataManager::saveLog()
+
 void DataManager::addDirectoryPath(QString directoryPath)
 {
     QDir *d = new QDir(directoryPath);

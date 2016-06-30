@@ -53,7 +53,6 @@ void MainWindow::createMenuBar()
     QAction *addBedAction = new QAction( "Open bed file", this );
     QAction *addDirAction = new QAction( "Open directory", this );
     QAction *quitAction = new QAction(tr( "&Quit" ), this );
-    QAction *aboutAction = new QAction(tr( "&About us"), this );
     QAction *peakCallingAction = new QAction( tr( "&Peak Calling" ), this );
     addAction->setShortcut( tr( "Ctrl+O" ) );
     quitAction->setShortcuts( QKeySequence::Quit );
@@ -70,6 +69,16 @@ void MainWindow::createMenuBar()
     toolsMenu->addAction( peakCallingAction );
 
     QMenu *windowMenu = mUi->mMenuBar->addMenu( tr( "&Window" ) );
+    QToolBar *fileTb = addToolBar("File list");
+    QToolBar *resultTb = addToolBar("Result list");
+    QToolBar *outputTb = addToolBar("Console output");
+    QAction *fileListAction = fileTb->toggleViewAction();
+    QAction *resultListAction = resultTb->toggleViewAction();
+    QAction *outputAction = outputTb->toggleViewAction();
+
+    windowMenu->addAction( fileListAction );
+    windowMenu->addAction( resultListAction );
+    windowMenu->addAction( outputAction );
 
     QMenu *helpMenu = mUi->mMenuBar->addMenu( tr( "&Help" ) );
     //helpMenu->addAction(aboutAction);
@@ -79,12 +88,17 @@ void MainWindow::createMenuBar()
     connect( addBedAction, SIGNAL( triggered( bool ) ), this, SLOT( addBedFile() ) );
     connect( addDirAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
     connect( peakCallingAction, SIGNAL( triggered( bool ) ), this, SLOT( peakCalling() ) );
+    connect( fileListAction, SIGNAL( triggered( bool ) ), mUi->mDockLeft, SLOT( setVisible( bool ) ) );
+    connect( mUi->mDockLeft, SIGNAL( visibilityChanged(bool)), fileListAction, SLOT( setChecked(bool) ) );
+    connect( resultListAction, SIGNAL( triggered( bool ) ), mUi->mDockResult, SLOT( setVisible( bool ) ) );
+    connect( mUi->mDockResult, SIGNAL( visibilityChanged(bool)), resultListAction, SLOT( setChecked(bool) ) );
+    connect( outputAction, SIGNAL( triggered( bool ) ), mUi->mBottomDock, SLOT( setVisible( bool ) ) );
+    connect( mUi->mBottomDock, SIGNAL( visibilityChanged(bool)), outputAction, SLOT( setChecked(bool) ) );
     connect( quitAction, SIGNAL( triggered( bool ) ), this, SLOT( close() ) );
-
     /*
     connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
     connect(aboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
-    */
+   */
 } // end of function MainWindow::createMenuBar()
 
 //---------------------------------------------------------------------------------
@@ -102,6 +116,7 @@ void MainWindow::createToolBar()
     QAction *zoominAction = new QAction( "Zoom in", this );
     QAction *zoomoutAction = new QAction( "Zoom out", this );
     QAction *stopAction = new QAction( "Stop", this );
+    QAction *saveLogAction = new QAction( "Save log", this );
 
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     addDirectoryAction->setIcon( QIcon::fromTheme( "folder-open" ) );
@@ -111,6 +126,7 @@ void MainWindow::createToolBar()
     refreshAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
     stopAction->setIcon( QIcon::fromTheme( "process-stop" ) );
+    saveLogAction->setIcon( QIcon::fromTheme( "document-save" ) );
 
     toolBar->addAction( addAction );
     toolBar->addAction( addDirectoryAction );
@@ -120,12 +136,14 @@ void MainWindow::createToolBar()
     toolBar->addAction( zoominAction );
     toolBar->addAction( zoomoutAction );
     toolBar->addAction( stopAction );
+    toolBar->addAction( saveLogAction );
 
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( addDirectoryAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
     connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
     connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
+    connect( saveLogAction, SIGNAL( triggered( bool ) ), this, SLOT( saveLog() ) );
 
 } // end of function MainWindow::createToolBar()
 
@@ -140,7 +158,6 @@ void MainWindow::createFileListDock()
     connect( mList, SIGNAL( readFile( QString ) ), this, SLOT( readFile( QString ) ) );
     connect( mResultList, SIGNAL( readFile( QString ) ), this, SLOT( readFile( QString ) ) );
     mUi->mDockLeft->setWidget( mList );
-
 } // end of function MainWindow::createFileListDock()
 
 //---------------------------------------------------------------------------------
@@ -318,3 +335,11 @@ void MainWindow::readJpg
     mUi->mTabWidget->addTab( area, fileName );
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
 } // end of function MainWindow::readJpg()
+
+//---------------------------------------------------------------------------------
+//! Save log file
+//---------------------------------------------------------------------------------
+void MainWindow::saveLog()
+{
+    DataManager::getDataManager()->saveLog( mUi->mLogText->toPlainText() );
+} // end of function MainWindow::saveLog()

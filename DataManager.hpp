@@ -22,16 +22,22 @@ public:
     void addFile(QString fileName);
     ~DataManager();
     void addDirectoryPath(QString directoryPath);
-
+    void saveLog
+        (
+        QString aLog
+        );
 private:
     DataManager();
     void getFileNameList();
     void getFilePath();
-
+    void checkProjectDir();
+    void checkLogDir();
     void updateDataList();
     static DataManager* dataManager;
     vector<string> *fileNameList;
     vector<int> fileIndex;
+    QString mProjectDir;
+    QString mLogDir;
 };
 
 #endif // DATAMANAGER_H
