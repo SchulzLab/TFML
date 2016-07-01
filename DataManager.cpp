@@ -20,59 +20,35 @@
 #include <qfile.h>
 #include <qfileinfo.h>
 
-DataManager* DataManager::dataManager = NULL;
+DataManager* DataManager::sDataManager = NULL;
 
-DataManager::DataManager()
+//---------------------------------------------------------------------------------
+//! Constructor
+//---------------------------------------------------------------------------------
+DataManager::DataManager() : QObject()
 {
     cout << "DataManager()" << endl;
     fileNameList = new vector<string>();
-    //connect(AnalysisManager::getAnalysisManager(), SIGNAL(peakCallingDone(QString)), this, SLOT(addDirectoryPath(QString)));
-}
+} // end of function DataManager::DataManager()
 
+//---------------------------------------------------------------------------------
+//! Destructor
+//---------------------------------------------------------------------------------
+DataManager::~DataManager()
+{
+
+} // end of function DataManager::~DataManager()
+
+//---------------------------------------------------------------------------------
+//! Get data manager
+//---------------------------------------------------------------------------------
 DataManager* DataManager::getDataManager()
 {
-    if( dataManager == NULL ){
-        cout << "dataManager == NULL" << endl;
-        dataManager = new DataManager();
+    if( sDataManager == NULL ){
+        sDataManager = new DataManager();
     }
-    return dataManager;
-}
-
-void DataManager::addFile(QString fileName)
-{
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
-        return;
-
-    QString content = file.readAll();
-    qInfo() << "Open File";
-    cout << content.toStdString() << endl;
-    file.close();
-    //string tmp = fileName.toStdString();
-    //fileNameList->push_back(tmp);
-    //getFileNameList();
-    return;
-}
-
-void DataManager::getFileNameList()
-{
-    for(int i=0; i < fileNameList->size(); i++){
-        cout << fileNameList->at(i) << endl;
-    }
-
-}
-
-void DataManager::updateDataList()
-{
-
-
-}
-
-void DataManager::getFilePath()
-{
-
-
-}
+    return sDataManager;
+} // end of function DataManager::getDataManager()
 
 //---------------------------------------------------------------------------------
 //! Check project dir and create if project dir not exist
@@ -112,13 +88,15 @@ void DataManager::saveLog
     checkProjectDir();
     checkLogDir();
     QDateTime dateTime = QDateTime().currentDateTime();
-    QString dateTimeString = dateTime.toString( "yyyy-MM-dd-hh-mm-ss" );
-    QString fileName = mLogDir + "/Log-" + dateTimeString + ".txt";
+    QString dateTimeString = dateTime.toString( "yyyy_MM_dd_hh_mm_ss" );
+    QString fileName = mLogDir + "/log_" + dateTimeString + ".txt";
     QFile file( fileName );
     file.open( QIODevice::WriteOnly );
     QDataStream out( &file );
     out << aLog;
     file.close();
+    QString msg = "Log has been saved in " + fileName;
+    processFinished( msg );
 } // end of function DataManager::saveLog()
 
 void DataManager::addDirectoryPath(QString directoryPath)
@@ -138,3 +116,40 @@ void DataManager::addDirectoryPath(QString directoryPath)
     }
 
 }
+
+void DataManager::addFile(QString fileName)
+{
+    QFile file(fileName);
+    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+        return;
+
+    QString content = file.readAll();
+    qInfo() << "Open File";
+    cout << content.toStdString() << endl;
+    file.close();
+    //string tmp = fileName.toStdString();
+    //fileNameList->push_back(tmp);
+    //getFileNameList();
+    return;
+}
+
+void DataManager::getFileNameList()
+{
+    for(int i=0; i < fileNameList->size(); i++){
+        cout << fileNameList->at(i) << endl;
+    }
+
+}
+
+void DataManager::updateDataList()
+{
+
+
+}
+
+void DataManager::getFilePath()
+{
+
+
+}
+

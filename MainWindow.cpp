@@ -32,9 +32,9 @@ MainWindow::MainWindow
     createMenuBar();
     createFileListDock();
     createToolBar();
-    //createAnalysisDock();
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mUpdateLog( QString ) ), this, SLOT( updateLogText( QString ) ) );
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( processFinished( QString ) ), this, SLOT( handleFinished( QString ) ) );
     mUi->textEdit->setAlignment(Qt::AlignCenter);
     setWindowTitle( "Epigenetics analysis tool" );
 } // end of function MainWindow::MainWindow()
@@ -343,3 +343,16 @@ void MainWindow::saveLog()
 {
     DataManager::getDataManager()->saveLog( mUi->mLogText->toPlainText() );
 } // end of function MainWindow::saveLog()
+
+//---------------------------------------------------------------------------------
+//! Handle process finished
+//---------------------------------------------------------------------------------
+void MainWindow::handleFinished
+    (
+    QString aMsg
+    )
+{
+    QMessageBox msgBox;
+    msgBox.setText( aMsg );
+    msgBox.exec();
+} // end of function MainWindow::handleFinished()

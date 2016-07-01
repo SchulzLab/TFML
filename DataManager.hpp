@@ -14,9 +14,13 @@
 
 using namespace std;
 
-class DataManager
+class DataManager : public QObject
 {
+    Q_OBJECT
 
+//----------------------------------------------------------------
+// Functions
+//----------------------------------------------------------------
 public:
     static DataManager* getDataManager();
     void addFile(QString fileName);
@@ -26,6 +30,7 @@ public:
         (
         QString aLog
         );
+
 private:
     DataManager();
     void getFileNameList();
@@ -33,7 +38,20 @@ private:
     void checkProjectDir();
     void checkLogDir();
     void updateDataList();
-    static DataManager* dataManager;
+//----------------------------------------------------------------
+// Signals
+//----------------------------------------------------------------
+signals:
+    void processFinished
+        (
+        QString aMsg
+        );
+
+//----------------------------------------------------------------
+// Variables
+//----------------------------------------------------------------
+private:
+    static DataManager* sDataManager;
     vector<string> *fileNameList;
     vector<int> fileIndex;
     QString mProjectDir;

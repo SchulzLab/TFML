@@ -67,6 +67,11 @@ private slots:
     void analyzeFile();
 
     void saveLog();
+
+    void handleFinished
+        (
+        QString aMsg
+        );
 //----------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------
