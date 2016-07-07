@@ -26,7 +26,6 @@ AnalysisManager* AnalysisManager::sAnalysisManager = NULL;
 AnalysisManager::AnalysisManager() : QObject()
 {
     mProcess = new QProcess();
-    cout << "AnalysisManager()" << endl;
 } // end of function AnalysisManager::AnalysisManager()
 
 //---------------------------------------------------------------------------------
@@ -57,10 +56,30 @@ void AnalysisManager::peakCalling
     QString aOutputPath
     )
 {
-    mOutputPath = aOutputPath;
+    mProcessType = PROCESS_TYPE::PEAK_CALLING;
+    mOutputPath = QDir::currentPath() + "/" + aOutputPath;
     QString peakCallingCmd = "bash /home/thsieh/JAMM-1.0.7.3/JAMM.sh " + aCmd;
     cout << peakCallingCmd.toStdString() << endl;
     mProcess->start( peakCallingCmd );
+    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
+    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ) );
+
+} // end of function AnalysisManager::peakCalling()
+
+//---------------------------------------------------------------------------------
+//! Execute peak calling
+//---------------------------------------------------------------------------------
+void AnalysisManager::tepic
+    (
+    QString aCmd,
+    QString aOutputPath
+    )
+{
+    mProcessType = PROCESS_TYPE::TEPIC;
+    mOutputPath = "/home/thsieh/TEPIC-1.0.0/Code/" + aOutputPath;
+    QDir::setCurrent( QStringLiteral("/home/thsieh/TEPIC-1.0.0/Code") );
+    QString tepicCmd = "bash TEPIC.sh " + aCmd;
+    mProcess->start( tepicCmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ) );
 
@@ -73,8 +92,10 @@ void AnalysisManager::updateText()
 {
     QString stdErr = mProcess->readAllStandardError();
     QString stdOut = mProcess->readAllStandardOutput();
+
     mUpdateLog( stdOut );
     mUpdateLog( stdErr );
+
 } // end of function AnalysisManager::updateText()
 
 //---------------------------------------------------------------------------------
@@ -86,8 +107,10 @@ void AnalysisManager::receiveFinished
     QProcess::ExitStatus aStatus
     )
 {
-    qInfo() << "AnalysisManager::receiveFinished";
-    mProcessOutputDone( mOutputPath );
+    QString outputPath;
+    outputPath = DataManager::getDataManager()->moveDir( mOutputPath, mProcessType );
+    mProcessOutputDone( outputPath );
+
 } // end of function AnalysisManager::recieveFinished()
 
 //---------------------------------------------------------------------------------
@@ -102,7 +125,6 @@ void AnalysisManager::analyseBedFile
     QStringList path = aFilePath.split( "/" );
     QString name = "analysis_" + path[ path.length() - 1 ];
     mOutputPath = QDir::currentPath() + '/' + name;
-    cout << mOutputPath.toStdString() << endl;
     mProcess->start( cmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );

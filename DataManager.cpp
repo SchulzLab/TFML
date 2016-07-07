@@ -67,12 +67,15 @@ void DataManager::checkProjectDir()
 //---------------------------------------------------------------------------------
 //! Check Log dir and create if log dir not exist
 //---------------------------------------------------------------------------------
-void DataManager::checkLogDir()
+void DataManager::checkDir
+    (
+    QString aDir
+    )
 {
-    mLogDir = mProjectDir + "/Log";
-    if( !QDir( mLogDir ).exists() )
+    QString dirPath = mProjectDir + "/" + aDir;
+    if( !QDir( dirPath ).exists() )
     {
-        QDir().mkpath( mLogDir );
+        QDir().mkpath( dirPath );
     }
 
 } // end of function DataManager::checkLogDir()
@@ -86,25 +89,126 @@ void DataManager::saveLog
     )
 {
     checkProjectDir();
-    checkLogDir();
+    checkDir( "Log" );
     QDateTime dateTime = QDateTime().currentDateTime();
     QString dateTimeString = dateTime.toString( "yyyy_MM_dd_hh_mm_ss" );
     QString fileName = mLogDir + "/log_" + dateTimeString + ".txt";
+
     QFile file( fileName );
     file.open( QIODevice::WriteOnly );
     QDataStream out( &file );
     out << aLog;
     file.close();
+
     QString msg = "Log has been saved in " + fileName;
     processFinished( msg );
 } // end of function DataManager::saveLog()
+
+//---------------------------------------------------------------------------------
+//! Move dir to dir which is under project dir
+//---------------------------------------------------------------------------------
+QString DataManager::moveDir
+    (
+    QString aDirPath,
+    int aType
+    )
+{
+    QString home = QDir().homePath();
+    mProjectDir = home + "/Epigenetics_project";
+    QStringList path = aDirPath.split( "/" );
+    QString sDirPath = path[ path.length() - 1 ];
+    QString preDir = path[ 0 ];
+
+    for( int i = 1; i < path.length() - 1; i++ ){
+        preDir += "/" + path[ i ];
+    }
+
+    if( aType == PROCESS_TYPE::TEPIC ){
+        // Create dir for result file
+        if( !QDir( aDirPath ).exists() )
+        {
+            QDir().mkpath( aDirPath );
+        }
+        copyFileWithPrefix( preDir, aDirPath, sDirPath );
+    }
+    checkDir( sDirPath );
+    QString targetPath = mProjectDir + "/Result/" + sDirPath;
+    copyRecursively( aDirPath, targetPath );
+    return targetPath;
+
+} // end of function DataManager::moveDir()
+
+//---------------------------------------------------------------------------------
+//! Copy file with prefix
+//---------------------------------------------------------------------------------
+bool DataManager::copyFileWithPrefix
+    (
+    const QString &aSrcFilePath,
+    const QString &aTgtFilePath,
+    const QString &aPrefix
+    )
+{
+
+    QFileInfo srcFileInfo( aSrcFilePath );
+    if( srcFileInfo.isDir() ){
+
+        QDir sourceDir( aSrcFilePath );
+        QStringList fileNames = sourceDir.entryList( QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System );
+
+        foreach( const QString &fileName, fileNames ){
+            // Check prefix
+            auto result = std::mismatch( aPrefix.begin(), aPrefix.end(), fileName.begin() );
+            if( result.first == aPrefix.end() ){
+                const QString newSrcFilePath = aSrcFilePath + QLatin1Char( '/' ) + fileName;
+                const QString newTgtFilePath = aTgtFilePath + QLatin1Char( '/' ) + fileName;
+                if ( !copyFileWithPrefix( newSrcFilePath, newTgtFilePath, aPrefix ) )
+                    return false;
+            }
+        }
+    }
+    else{
+        if( !QFile::copy(aSrcFilePath, aTgtFilePath ) )
+            return false;
+    }
+    return true;
+} // end of function DataManager::copyFileWithPrefix()
+
+//---------------------------------------------------------------------------------
+//! Copy dir recursively
+//---------------------------------------------------------------------------------
+bool DataManager::copyRecursively
+    (
+    const QString &aSrcFilePath,
+    const QString &aTgtFilePath
+    )
+{
+    QFileInfo srcFileInfo( aSrcFilePath );
+    if( srcFileInfo.isDir() ){
+        QDir targetDir( aTgtFilePath );
+        targetDir.cdUp();
+        if( !targetDir.mkdir( QFileInfo( aTgtFilePath ).fileName() ) )
+            return false;
+        QDir sourceDir( aSrcFilePath );
+        QStringList fileNames = sourceDir.entryList( QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System );
+        foreach( const QString &fileName, fileNames ){
+            const QString newSrcFilePath = aSrcFilePath + QLatin1Char( '/' ) + fileName;
+            const QString newTgtFilePath = aTgtFilePath + QLatin1Char( '/' ) + fileName;
+            if ( !copyRecursively( newSrcFilePath, newTgtFilePath ) )
+                return false;
+        }
+    }
+    else{
+        if( !QFile::copy(aSrcFilePath, aTgtFilePath ) )
+            return false;
+    }
+    return true;
+} // end of function DataManager::copyRecursively()
 
 void DataManager::addDirectoryPath(QString directoryPath)
 {
     QDir *d = new QDir(directoryPath);
     d->setFilter( QDir::Hidden | QDir::NoSymLinks );
     d->setSorting( QDir::Size | QDir::Reversed );
-    qInfo() << directoryPath;
     const QFileInfoList list = d->entryInfoList();
     QFileInfoList::const_iterator iterator = list.begin();
 

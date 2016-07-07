@@ -27,11 +27,6 @@ FileListWidget::FileListWidget
     mTree->setColumnCount( COLUMN_COUNT );
     mTree->setHeaderHidden( true );
 
-    /* For the test */
-    QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList( "result" ) );
-    allfile( root, "peak_call_result" );
-    /////////////////////
-
     layout->setContentsMargins( 9, 0, 0, 0 );
     layout->addWidget( mTree );
     setLayout( layout );
@@ -51,7 +46,6 @@ QFileInfoList FileListWidget::allfile
     QDir dir( aPath );
     QDir dirFile( aPath );
     dirFile.setFilter( QDir::Files | QDir::Hidden | QDir::NoSymLinks );
-    //dir_file.setNameFilters(filters);
 
     dirFile.setSorting(QDir::Name);
     QFileInfoList listFile = dirFile.entryInfoList();
@@ -59,7 +53,6 @@ QFileInfoList FileListWidget::allfile
         QFileInfo fileInfo = listFile.at( i );
         QString fileName = fileInfo.fileName();
         QString pathName = fileInfo.absoluteFilePath();
-        qInfo() << fileInfo.absoluteFilePath() << fileInfo.fileName();
         QTreeWidgetItem* child = new QTreeWidgetItem( QStringList() << fileName << pathName );
         child->setToolTip( 0, pathName );
         child->setCheckState( 1, Qt::Checked );
@@ -102,7 +95,6 @@ void FileListWidget::addDirectory
     {
         if( s.st_mode & S_IFDIR )
         {
-            qInfo() << " FileListWidget::addDirectory";
             QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
             QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
@@ -111,7 +103,6 @@ void FileListWidget::addDirectory
         }
         else if( s.st_mode & S_IFREG )
         {
-            qInfo() << " FileListWidget::addFile";
             QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
             QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
@@ -146,7 +137,6 @@ void FileListWidget::clickedEvent
     )
 {
     QString fileName = aItem->text( 1 );
-    qInfo() << fileName;
     if( !fileName.isEmpty() ){
         readFile( fileName );
     }

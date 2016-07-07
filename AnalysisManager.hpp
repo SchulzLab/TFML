@@ -19,6 +19,12 @@ class AnalysisManager : public QObject
 {
     Q_OBJECT
 
+public:
+    enum PROCESS_TYPE
+    {
+        PEAK_CALLING = 0,
+        TEPIC = 1
+    };
 //----------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------
@@ -28,6 +34,12 @@ public:
     ~AnalysisManager();
 
     void peakCalling
+        (
+        QString aCmd,
+        QString aOutputPath
+        );
+
+    void tepic
         (
         QString aCmd,
         QString aOutputPath
@@ -74,9 +86,11 @@ signals:
 //----------------------------------------------------------------
 private:
     QProcess *mProcess;
+    QProcess *mProcessOutput;
     QMessageBox *mResultBox;
     QString mOutputPath;
     static AnalysisManager* sAnalysisManager;
+    int mProcessType;
 
 };
 

@@ -1,20 +1,20 @@
 /*********************************************************************
 *
 *   HEADER NAME:
-*       PeakCallingDialog.hpp
+*       TepicDialog.hpp
 *
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
 *********************************************************************/
 
-#ifndef PEAKCALLINGDIALOG_H
-#define PEAKCALLINGDIALOG_H
+#ifndef TEPICDIALOG_HPP
+#define TEPICDIALOG_HPP
 
 #include <QtWidgets>
 #include <QtSql>
 #include <QtXml>
 
-class PeakCallingDialog : public QDialog
+class TepicDialog: public QDialog
 {
     Q_OBJECT
 
@@ -22,7 +22,7 @@ class PeakCallingDialog : public QDialog
 // Functions
 //----------------------------------------------------------------
 public:
-    PeakCallingDialog
+    TepicDialog
         (
         QWidget *parent = 0
         );
@@ -39,8 +39,6 @@ private:
 // Slots
 //----------------------------------------------------------------
 private slots:
-    void selectDirectory();
-
     void selectFile();
 
     void handleClickOk();
@@ -59,35 +57,35 @@ private:
     QComboBox *mPcrDupBox;
     QComboBox *mAlignTypeBox;
 
-    QLabel *mSampleLabel;
     QLabel *mGenomeLabel;
+    QLabel *mAnnotedRegLabel;
     QLabel *mOutputLabel;
-    QLabel *mControlLabel;
-    QLabel *mFragLengthLabel;
-    QLabel *mResolutionLabel;
-    QLabel *mPeakCallModeLabel;
-    QLabel *mMixModelInitLabel;
-    QLabel *mBinSizeLabel;
-    QLabel *mWindowFoldLabel;
-    QLabel *mPcrDupLabel;
-    QLabel *mAlignTypeLabel;
-    QLabel *mMinWindowSizeLabel;
-    QLabel *mNumProcLabel;
+    QLabel *mPwmLabel;
+    QLabel *mGenomeAnnotedLabel;
+    QLabel *mWindowSizeLabel;
+    QLabel *mSignalOcLabel;
+    QLabel *mExpoDecayLabel;
+    QLabel *mAvgSignalLabel;
+    QLabel *mNumCoreTrapLabel;
 
-    QLineEdit *mSampleEditor;
     QLineEdit *mGenomeEditor;
+    QLineEdit *mAnnotedRegEditor;
     QLineEdit *mOutputEditor;
-    QLineEdit *mControlEditor;
-    QLineEdit *mFragLengthEditor;
-    QLineEdit *mBinSizeEditor;
-    QLineEdit *mWindowFoldEditor;
-    QLineEdit *mMinWindowSizeEditor;
-    QLineEdit *mNumProcEditor;
+    QLineEdit *mPwmEditor;
+    QLineEdit *mGenomeAnnotedEditor;
+    QLineEdit *mWindowSizeEditor;
+    QLineEdit *mSignalOcEditor;
+    QLineEdit *mAvgSignalEditor;
+    QLineEdit *mNumCoreTrapEditor;
 
-    QPushButton *mSampleButton;
+    QCheckBox *mExpoDecayCheckBox;
+    QPushButton *mAnnotedRegButton;
     QPushButton *mGenomeButton;
-    QPushButton *mControlButton;
+    QPushButton *mPwmButton;
+    QPushButton *mGenomeAnnotedButton;
+    QPushButton *mSignalIOcButton;
     QPushButton *mMoreButton;
 
 };
-#endif // PEAKCALLINGDIALOG_H
+
+#endif // TEPICDIALOG_HPP

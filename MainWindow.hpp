@@ -45,7 +45,9 @@ private slots:
 
     void addBedFile();
 
-    void peakCalling();
+    void handlePeakCallingClicked();
+
+    void handleTepicClicked();
 
     void readFile
         (

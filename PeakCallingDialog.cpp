@@ -187,7 +187,7 @@ QDialogButtonBox *PeakCallingDialog::createButtons()
     cancelButton->setDefault( true );
 
     connect( cancelButton, SIGNAL( clicked() ), this, SLOT( close() ) );
-    connect( okButton, SIGNAL( clicked() ), this, SLOT( ok() ) );
+    connect( okButton, SIGNAL( clicked() ), this, SLOT( handleClickOk() ) );
     QDialogButtonBox *buttonBox = new QDialogButtonBox;
     buttonBox->addButton( okButton, QDialogButtonBox::ResetRole );
     buttonBox->addButton( cancelButton, QDialogButtonBox::RejectRole );
@@ -231,7 +231,7 @@ void PeakCallingDialog::selectFile()
 //---------------------------------------------------------------------------------
 //! Handle click ok
 //---------------------------------------------------------------------------------
-void PeakCallingDialog::ok()
+void PeakCallingDialog::handleClickOk()
 {
     if( mSampleEditor->text().isEmpty() || mGenomeEditor->text().isEmpty() || mOutputEditor->text().isEmpty()) {
         cout << "empty" << endl;

@@ -10,6 +10,7 @@
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
 #include "PeakCallingDialog.hpp"
+#include "TepicDialog.hpp"
 #include <iostream>
 #include <string>
 #include "DataManager.hpp"
@@ -49,15 +50,15 @@ MainWindow::~MainWindow()
 //---------------------------------------------------------------------------------
 void MainWindow::createMenuBar()
 {
+    // File Menu
     QAction *addAction = new QAction( tr( "&Open file" ), this );
     QAction *addBedAction = new QAction( "Open bed file", this );
     QAction *addDirAction = new QAction( "Open directory", this );
-    QAction *quitAction = new QAction(tr( "&Quit" ), this );
-    QAction *peakCallingAction = new QAction( tr( "&Peak Calling" ), this );
+    QAction *quitAction = new QAction( tr( "&Quit" ), this );
+
     addAction->setShortcut( tr( "Ctrl+O" ) );
     quitAction->setShortcuts( QKeySequence::Quit );
 
-    //QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
     QMenu *fileMenu = mUi->mMenuBar->addMenu( tr( "&File" ) );
     fileMenu->addAction( addAction );
     fileMenu->addAction( addBedAction );
@@ -65,9 +66,17 @@ void MainWindow::createMenuBar()
     fileMenu->addSeparator();
     fileMenu->addAction( quitAction );
 
+    // Tools Menu
+    QAction *peakCallingAction = new QAction( tr( "&Peak Calling" ), this );
+    QAction *tepicAction = new QAction( tr( "&TEPIC" ), this );
+    peakCallingAction->setShortcut( tr( "Ctrl+P" ) );
+    tepicAction->setShortcut( tr( "Ctrl+T" ) );
+
     QMenu *toolsMenu = mUi->mMenuBar->addMenu( tr( "&Tools" ) );
     toolsMenu->addAction( peakCallingAction );
+    toolsMenu->addAction( tepicAction );
 
+    // Windows Menu
     QMenu *windowMenu = mUi->mMenuBar->addMenu( tr( "&Window" ) );
     QToolBar *fileTb = addToolBar("File list");
     QToolBar *resultTb = addToolBar("Result list");
@@ -80,25 +89,26 @@ void MainWindow::createMenuBar()
     windowMenu->addAction( resultListAction );
     windowMenu->addAction( outputAction );
 
+    // Help Menu
+    QAction *aboutQtAction = new QAction( tr( "About Qt" ), this );
     QMenu *helpMenu = mUi->mMenuBar->addMenu( tr( "&Help" ) );
-    //helpMenu->addAction(aboutAction);
-    //helpMenu->addAction(aboutQtAction);
+    helpMenu->addAction(aboutQtAction);
 
+    // Connect
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( addBedAction, SIGNAL( triggered( bool ) ), this, SLOT( addBedFile() ) );
     connect( addDirAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
-    connect( peakCallingAction, SIGNAL( triggered( bool ) ), this, SLOT( peakCalling() ) );
+    connect( peakCallingAction, SIGNAL( triggered( bool ) ), this, SLOT( handlePeakCallingClicked() ) );
+    connect( tepicAction, SIGNAL( triggered( bool ) ), this, SLOT( handleTepicClicked() ) );
     connect( fileListAction, SIGNAL( triggered( bool ) ), mUi->mDockLeft, SLOT( setVisible( bool ) ) );
-    connect( mUi->mDockLeft, SIGNAL( visibilityChanged(bool)), fileListAction, SLOT( setChecked(bool) ) );
+    connect( mUi->mDockLeft, SIGNAL( visibilityChanged(bool)), fileListAction, SLOT( setChecked( bool ) ) );
     connect( resultListAction, SIGNAL( triggered( bool ) ), mUi->mDockResult, SLOT( setVisible( bool ) ) );
-    connect( mUi->mDockResult, SIGNAL( visibilityChanged(bool)), resultListAction, SLOT( setChecked(bool) ) );
+    connect( mUi->mDockResult, SIGNAL( visibilityChanged( bool ) ), resultListAction, SLOT( setChecked( bool ) ) );
     connect( outputAction, SIGNAL( triggered( bool ) ), mUi->mBottomDock, SLOT( setVisible( bool ) ) );
-    connect( mUi->mBottomDock, SIGNAL( visibilityChanged(bool)), outputAction, SLOT( setChecked(bool) ) );
+    connect( mUi->mBottomDock, SIGNAL( visibilityChanged( bool ) ), outputAction, SLOT( setChecked( bool ) ) );
     connect( quitAction, SIGNAL( triggered( bool ) ), this, SLOT( close() ) );
-    /*
-    connect(aboutAction, SIGNAL(triggered(bool)), this, SLOT(about()));
-    connect(aboutQtAction, SIGNAL(triggered(bool)), qApp, SLOT(aboutQt()));
-   */
+    connect( aboutQtAction, SIGNAL(triggered( bool ) ), qApp, SLOT( aboutQt() ) );
+
 } // end of function MainWindow::createMenuBar()
 
 //---------------------------------------------------------------------------------
@@ -165,11 +175,9 @@ void MainWindow::createFileListDock()
 //---------------------------------------------------------------------------------
 void MainWindow::addFile()
 {
-    std::cout << QDir::currentPath().toStdString() << endl;
     QFileDialog *dialog = new QFileDialog();
     QString fileName = dialog->getOpenFileName( this, tr( "select file" ) );
     if( fileName != "" ) {
-        qInfo() << "MainWindow::openFile()";
         mList->addDirectory( fileName );
     }
 
@@ -182,7 +190,6 @@ void MainWindow::delFile()
 {
     QTreeWidgetItem *item = mList->getCurrentItem();
     if( item != NULL ){
-        qInfo() << "MainWindow::delFile()";
         mList->delFile();
     }
 
@@ -193,11 +200,9 @@ void MainWindow::delFile()
 //---------------------------------------------------------------------------------
 void MainWindow::addBedFile()
 {
-    std::cout << QDir::currentPath().toStdString() << endl;
     QFileDialog *dialog = new QFileDialog();
     QString fileName = dialog->getOpenFileName( this, tr( "select file" ), ".", tr("Bed Files(*.bed)") );
     if( fileName != "" ) {
-        qInfo() << "MainWindow::openBedFile()";
         mList->addDirectory( fileName );
     }
 } // end of function MainWindow::addBedFile()
@@ -210,19 +215,27 @@ void MainWindow::addDirectory()
     QString fileName = QFileDialog::getExistingDirectory( this, tr( "Open Directory" ), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
     if( fileName != "" ) {
-        qInfo() << "MainWindow::openFile()";
         mList->addDirectory( fileName );
     }
 } // end of function MainWindow::addDirectory()
 
 //---------------------------------------------------------------------------------
-//! Create peak calling dialog
+//! Handle peak calling clicked
 //---------------------------------------------------------------------------------
-void MainWindow::peakCalling()
+void MainWindow::handlePeakCallingClicked()
 {
     PeakCallingDialog *dialog = new PeakCallingDialog();
     dialog->exec();
 } // end of function MainWindow::peakCalling()
+
+//---------------------------------------------------------------------------------
+//! Create peak calling dialog
+//---------------------------------------------------------------------------------
+void MainWindow::handleTepicClicked()
+{
+    TepicDialog *dialog = new TepicDialog();
+    dialog->exec();
+} // end of function MainWindow::handleTepicClicked()
 
 //---------------------------------------------------------------------------------
 //! Read file in the file list
@@ -320,13 +333,9 @@ void MainWindow::readJpg
     QString aFileName
     )
 {
-
-    qInfo() << "loading jpg";
     QLabel *label = new QLabel();
-
     label->setPixmap( aFileName );
     label->show();
-
     label->setProperty( "tab_dir_fullpath", aFileName );
     QScrollArea *area = new QScrollArea();
     area->setWidget(label);
