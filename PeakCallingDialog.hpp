@@ -18,6 +18,13 @@ class PeakCallingDialog : public QDialog
 {
     Q_OBJECT
 
+public:
+    enum SELECT_TYPE
+    {
+        FILE = 0,
+        DIR = 1
+    };
+
 //----------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------
@@ -88,6 +95,6 @@ private:
     QPushButton *mGenomeButton;
     QPushButton *mControlButton;
     QPushButton *mMoreButton;
-
+    QTreeWidget *mTree;
 };
 #endif // PEAKCALLINGDIALOG_H

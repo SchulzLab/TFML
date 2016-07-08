@@ -21,7 +21,8 @@ SOURCES += Main.cpp\
     BedFileData.cpp \
     AnalysisManager.cpp \
     PeakCallingDialog.cpp \
-    TepicDialog.cpp
+    TepicDialog.cpp \
+    FileDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     Dialog.hpp \
@@ -30,6 +31,7 @@ HEADERS  += MainWindow.hpp \
     BedFileData.hpp \
     AnalysisManager.hpp \
     PeakCallingDialog.hpp \
-    TepicDialog.hpp
+    TepicDialog.hpp \
+    FileDialog.hpp
 
 FORMS    += MainWindow.ui

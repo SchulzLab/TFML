@@ -21,17 +21,50 @@ class FileListWidget : public QWidget
     Q_OBJECT
 
 public:
-    FileListWidget(QWidget *widget);
+    FileListWidget
+        (
+        QWidget *widget
+        );
+
     QTreeWidgetItem *getCurrentItem();
+
+    QTreeWidget *getTree();
 
 public slots:
     void delFile();
-    void addDirectory( QString path );
-    void clickedEvent( QTreeWidgetItem *aItem, int aNumber );
 
+    void addDirectory
+        (
+        QString path
+        );
+
+    void clickedEvent
+        (
+        QTreeWidgetItem *aItem,
+        int aNumber
+        );
+
+    void doubleClickedEvent
+        (
+        QTreeWidgetItem *aItem,
+        int aNumber
+        );
 signals:
-    void itemClicked( QTreeWidgetItem *aItem, int aNumber );
-    void readFile( QString fileName );
+    void itemClicked
+        (
+        QTreeWidgetItem *aItem,
+        int aNumber
+        );
+
+    void getFileFullPathName
+        (
+        QString fileName
+        );
+
+    void getFileName
+        (
+        QStringList fileName
+        );
 
 private:
     QTreeWidget *mTree;

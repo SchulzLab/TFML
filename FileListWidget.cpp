@@ -27,11 +27,12 @@ FileListWidget::FileListWidget
     mTree->setColumnCount( COLUMN_COUNT );
     mTree->setHeaderHidden( true );
 
-    layout->setContentsMargins( 9, 0, 0, 0 );
+    layout->setContentsMargins( 0, 0, 0, 0 );
     layout->addWidget( mTree );
     setLayout( layout );
 
-    connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
+    connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( doubleClickedEvent( QTreeWidgetItem*, int ) ) );
+    connect( mTree, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
 } // end of function FileListWidget::FileListWidget()
 
 //---------------------------------------------------------------------------------
@@ -68,7 +69,7 @@ QFileInfoList FileListWidget::allfile
          QFileInfo folderInfo = folderList.at( i );
          QString fileName = folderInfo.fileName();
 
-         QTreeWidgetItem* childRoot = new QTreeWidgetItem( QStringList() << fileName );
+         QTreeWidgetItem* childRoot = new QTreeWidgetItem( QStringList() << fileName << pathName );
          childRoot->setToolTip( 0, pathName );
          //childroot->setIcon(0, QIcon("./Resources/images/file.png"));
          childRoot->setCheckState( 1, Qt::Checked );
@@ -116,7 +117,7 @@ void FileListWidget::addDirectory
 //---------------------------------------------------------------------------------
 void FileListWidget::delFile()
 {
-    qDeleteAll(mTree->selectedItems());
+    qDeleteAll( mTree->selectedItems());
 } // end of function FileListWidget::delFile()
 
 //---------------------------------------------------------------------------------
@@ -128,7 +129,7 @@ QTreeWidgetItem* FileListWidget::getCurrentItem()
 } // end of function FileListWidget::getCurrentItem()
 
 //---------------------------------------------------------------------------------
-//! Handel double click event
+//! Handel click event
 //---------------------------------------------------------------------------------
 void FileListWidget::clickedEvent
     (
@@ -136,8 +137,33 @@ void FileListWidget::clickedEvent
     int aNumber
     )
 {
-    QString fileName = aItem->text( 1 );
-    if( !fileName.isEmpty() ){
-        readFile( fileName );
+    QStringList list;
+    list.append( aItem->text( 0 ) );
+    list.append( aItem->text( 1 ) );
+    if( !list.isEmpty() ){
+        getFileName( list  );
     }
 } // end of function FileListWidget::clickedEvent()
+
+//---------------------------------------------------------------------------------
+//! Handel double click event
+//---------------------------------------------------------------------------------
+void FileListWidget::doubleClickedEvent
+    (
+    QTreeWidgetItem *aItem,
+    int aNumber
+    )
+{
+    QString fileName = aItem->text( 1 );
+    if( !fileName.isEmpty() ){
+        getFileFullPathName( fileName );
+    }
+} // end of function FileListWidget::clickedEvent()
+
+//---------------------------------------------------------------------------------
+//! Get current item in filelist
+//---------------------------------------------------------------------------------
+QTreeWidget* FileListWidget::getTree()
+{
+   return mTree;
+} // end of function FileListWidget::getCurrentItem()

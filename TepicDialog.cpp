@@ -11,6 +11,7 @@
 #include "AnalysisManager.hpp"
 #include <iostream>
 #include "TepicDialog.hpp"
+#include "FileDialog.hpp"
 
 using namespace std;
 
@@ -188,9 +189,12 @@ void TepicDialog::selectFile()
         edit = mPwmEditor;
     }
 
-    QFileDialog *dialog = new QFileDialog();
-    QString fileName = dialog->getOpenFileName( this, "select file" );
-    edit->setText( fileName );
+    FileDialog *dialog = new FileDialog( SELECT_TYPE::FILE );
+
+    dialog->exec();
+    if( !dialog->getFileName().isEmpty() ){
+        edit->setText( dialog->getFileName() );
+    }
 } // end of function TepicDialog::selectFile()
 
 //---------------------------------------------------------------------------------

@@ -163,10 +163,12 @@ void MainWindow::createToolBar()
 void MainWindow::createFileListDock()
 {
     mList = mUi->mFileList;
+    mList->setContentsMargins( 9, 0, 0, 0 );
     mResultList = mUi->mResultFileList;
+    mResultList->setContentsMargins( 9, 0, 0, 0 );
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), mResultList, SLOT( addDirectory( QString ) ) );
-    connect( mList, SIGNAL( readFile( QString ) ), this, SLOT( readFile( QString ) ) );
-    connect( mResultList, SIGNAL( readFile( QString ) ), this, SLOT( readFile( QString ) ) );
+    connect( mList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
+    connect( mResultList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     mUi->mDockLeft->setWidget( mList );
 } // end of function MainWindow::createFileListDock()
 
@@ -248,6 +250,10 @@ void MainWindow::readFile
     QString aFileName
     )
 {
+    QFileInfo info( aFileName );
+    if( info.isDir() ){
+        return;
+    }
     //Check if the file already open
     for( int k = 0; k < mUi->mTabWidget->count(); k++ ) {
         if( mUi->mTabWidget->widget( k )->property( "tab_dir_fullpath" ).toString() == aFileName ) {

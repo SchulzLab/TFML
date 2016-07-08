@@ -10,6 +10,7 @@
 #include "PeakCallingDialog.hpp"
 #include "AnalysisManager.hpp"
 #include <iostream>
+#include "FileDialog.hpp"
 
 using namespace std;
 
@@ -212,10 +213,13 @@ void PeakCallingDialog::selectDirectory()
         edit = mControlEditor;
     }
 
-    QFileDialog *dialog = new QFileDialog();
-    QString directoryName = dialog->getExistingDirectory( this, tr( "select file" ), "/home", QFileDialog::ShowDirsOnly
-                                               | QFileDialog::DontResolveSymlinks );
-    edit->setText( directoryName );
+    FileDialog *dialog = new FileDialog( SELECT_TYPE::DIR );
+
+    dialog->exec();
+    if( !dialog->getFileName().isEmpty() ){
+        edit->setText( dialog->getFileName() );
+    }
+
 } // end of function PeakCallingDialog::selectDirectory()
 
 //---------------------------------------------------------------------------------
@@ -223,9 +227,13 @@ void PeakCallingDialog::selectDirectory()
 //---------------------------------------------------------------------------------
 void PeakCallingDialog::selectFile()
 {
-    QFileDialog *dialog = new QFileDialog();
-    QString fileName = dialog->getOpenFileName( this, "select file" );
-    mGenomeEditor->setText( fileName );
+    FileDialog *dialog = new FileDialog( SELECT_TYPE::FILE );
+
+    dialog->exec();
+    if( !dialog->getFileName().isEmpty() ){
+        mGenomeEditor->setText( dialog->getFileName() );
+    }
+
 } // end of function PeakCallingDialog::selectFile()
 
 //---------------------------------------------------------------------------------
