@@ -11,6 +11,7 @@
 #define DATAMANAGER_H
 
 #include <QMainWindow>
+#include <vector>
 
 using namespace std;
 
@@ -35,7 +36,10 @@ public:
 
     ~DataManager();
 
-    void addDirectoryPath(QString directoryPath);
+    void addPath
+        (
+        QString aPath
+        );
 
     void saveLog
         (
@@ -48,10 +52,10 @@ public:
         int aType
         );
 
+    QStringList getFileNameList();
+
 private:
     DataManager();
-
-    void getFileNameList();
 
     void getFilePath();
 
@@ -94,6 +98,7 @@ private:
     vector<int> fileIndex;
     QString mProjectDir;
     QString mLogDir;
+    QStringList mFileList;
 };
 
 #endif // DATAMANAGER_H

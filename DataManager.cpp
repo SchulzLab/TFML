@@ -204,22 +204,16 @@ bool DataManager::copyRecursively
     return true;
 } // end of function DataManager::copyRecursively()
 
-void DataManager::addDirectoryPath(QString directoryPath)
+//---------------------------------------------------------------------------------
+//! Add dir or file path into filelist
+//---------------------------------------------------------------------------------
+void DataManager::addPath
+    (
+    QString aPath
+    )
 {
-    QDir *d = new QDir(directoryPath);
-    d->setFilter( QDir::Hidden | QDir::NoSymLinks );
-    d->setSorting( QDir::Size | QDir::Reversed );
-    const QFileInfoList list = d->entryInfoList();
-    QFileInfoList::const_iterator iterator = list.begin();
-
-    cout << "Filename\t\tSize" << endl;
-    while ( iterator != list.end() ) {
-        cout << qPrintable((*iterator).fileName()) << "\t"
-             << (*iterator).size() << endl;
-        ++iterator;
-    }
-
-}
+    mFileList.append( aPath );
+} // end of function DataManager::addPath()
 
 void DataManager::addFile(QString fileName)
 {
@@ -237,19 +231,14 @@ void DataManager::addFile(QString fileName)
     return;
 }
 
-void DataManager::getFileNameList()
+//---------------------------------------------------------------------------------
+//! Return filelist
+//---------------------------------------------------------------------------------
+QStringList DataManager::getFileNameList()
 {
-    for(int i=0; i < fileNameList->size(); i++){
-        cout << fileNameList->at(i) << endl;
-    }
+    return mFileList;
+} // end of function DataManager::addPath()
 
-}
-
-void DataManager::updateDataList()
-{
-
-
-}
 
 void DataManager::getFilePath()
 {

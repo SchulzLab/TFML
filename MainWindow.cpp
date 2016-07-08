@@ -179,6 +179,7 @@ void MainWindow::addFile()
     QString fileName = dialog->getOpenFileName( this, tr( "select file" ) );
     if( fileName != "" ) {
         mList->addDirectory( fileName );
+        DataManager::getDataManager()->addPath( fileName );
     }
 
 } // end of function MainWindow::addFile()
@@ -204,6 +205,7 @@ void MainWindow::addBedFile()
     QString fileName = dialog->getOpenFileName( this, tr( "select file" ), ".", tr("Bed Files(*.bed)") );
     if( fileName != "" ) {
         mList->addDirectory( fileName );
+        DataManager::getDataManager()->addPath( fileName );
     }
 } // end of function MainWindow::addBedFile()
 
@@ -216,6 +218,7 @@ void MainWindow::addDirectory()
 
     if( fileName != "" ) {
         mList->addDirectory( fileName );
+        DataManager::getDataManager()->addPath( fileName );
     }
 } // end of function MainWindow::addDirectory()
 
