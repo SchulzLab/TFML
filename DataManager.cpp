@@ -90,14 +90,17 @@ void DataManager::saveLog
 {
     checkProjectDir();
     checkDir( "Log" );
+    mLogDir = mProjectDir + "/Log";
     QDateTime dateTime = QDateTime().currentDateTime();
     QString dateTimeString = dateTime.toString( "yyyy_MM_dd_hh_mm_ss" );
     QString fileName = mLogDir + "/log_" + dateTimeString + ".txt";
 
     QFile file( fileName );
     file.open( QIODevice::WriteOnly );
-    QDataStream out( &file );
-    out << aLog;
+    QTextStream streamFileOut( &file );
+    streamFileOut.setCodec( "UTF-8" );
+    streamFileOut << aLog;
+    streamFileOut.flush();
     file.close();
 
     QString msg = "Log has been saved in " + fileName;
