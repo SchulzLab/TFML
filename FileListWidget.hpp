@@ -30,6 +30,11 @@ public:
 
     QTreeWidget *getTree();
 
+    void addSubDirectory
+        (
+        QString aPath
+        );
+
 public slots:
     void delFile();
 

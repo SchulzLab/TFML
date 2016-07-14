@@ -113,6 +113,21 @@ void FileListWidget::addDirectory
 } // end of function FileListWidget::addDirectory()
 
 //---------------------------------------------------------------------------------
+//! Add file or directory in subdirectory
+//---------------------------------------------------------------------------------
+void FileListWidget::addSubDirectory
+    (
+    QString aPath
+    )
+{
+    QDir dir( aPath );
+    QFileInfoList list = dir.entryInfoList();
+    for( int i = 0; i < list.length(); i++ ){
+        addDirectory( list.at( i ).absoluteFilePath() );
+    }
+} // end of function FileListWidget::addSubDirectory()
+
+//---------------------------------------------------------------------------------
 //! Delete file or directory
 //---------------------------------------------------------------------------------
 void FileListWidget::delFile()

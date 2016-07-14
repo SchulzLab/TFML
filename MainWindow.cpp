@@ -170,6 +170,9 @@ void MainWindow::createFileListDock()
     connect( mList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     connect( mResultList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     mUi->mDockLeft->setWidget( mList );
+    QString home = QDir().homePath();
+    QString resultDir = home + "/Epigenetics_project/Result";
+    mResultList->addSubDirectory( resultDir );
 } // end of function MainWindow::createFileListDock()
 
 //---------------------------------------------------------------------------------
