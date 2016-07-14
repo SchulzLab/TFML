@@ -186,7 +186,10 @@ void TepicDialog::selectFile()
         edit = mPwmEditor;
     }
     else if( senderObjName == "SignalButton" ){
-        edit = mPwmEditor;
+        edit = mSignalOcEditor;
+    }
+    else if( senderObjName == "GenomeAnnotedButton" ){
+        edit = mGenomeAnnotedEditor;
     }
 
     FileDialog *dialog = new FileDialog( SELECT_TYPE::FILE );
@@ -209,13 +212,13 @@ void TepicDialog::handleClickOk()
         QString cmd = "-g " + mGenomeEditor->text() + " -b " + mAnnotedRegEditor->text() + " -o " + mOutputEditor->text() + " -p " + mPwmEditor->text();
         if( mExtendInputWidgetBox->isVisible() ){
             if( !mGenomeAnnotedEditor->text().isEmpty() ){
-                cmd = cmd + " -c " + mGenomeAnnotedEditor->text();
+                cmd = cmd + " -a " + mGenomeAnnotedEditor->text();
             }
             if( !mWindowSizeEditor->text().isEmpty() ){
                 cmd = cmd + " -w " + mWindowSizeEditor->text();
             }
-            if( !mSignalOcLabel->text().isEmpty() ){
-                cmd = cmd + " -d " + mSignalOcLabel->text();
+            if( !mSignalOcEditor->text().isEmpty() ){
+                cmd = cmd + " -d " + mSignalOcEditor->text();
             }
             if( !mExpoDecayCheckBox->isChecked() ){
                 cmd = cmd + " -e ";

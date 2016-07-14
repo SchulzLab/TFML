@@ -47,8 +47,7 @@ QFileInfoList FileListWidget::allfile
     QDir dir( aPath );
     QDir dirFile( aPath );
     dirFile.setFilter( QDir::Files | QDir::Hidden | QDir::NoSymLinks );
-
-    dirFile.setSorting(QDir::Name);
+    dirFile.setSorting( QDir::Name );
     QFileInfoList listFile = dirFile.entryInfoList();
     for( int i = 0; i < listFile.size(); ++i ) {
         QFileInfo fileInfo = listFile.at( i );
@@ -121,8 +120,8 @@ void FileListWidget::addSubDirectory
     )
 {
     QDir dir( aPath );
-    QFileInfoList list = dir.entryInfoList();
-    for( int i = 0; i < list.length(); i++ ){
+    QFileInfoList list = dir.entryInfoList( QDir::Dirs | QDir::NoDotAndDotDot );
+    for( int i = 0; i < list.size(); i++ ){
         addDirectory( list.at( i ).absoluteFilePath() );
     }
 } // end of function FileListWidget::addSubDirectory()

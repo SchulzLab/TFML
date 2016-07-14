@@ -132,11 +132,14 @@ QString DataManager::moveDir
         {
             QDir().mkpath( aDirPath );
         }
-        copyFileWithPrefix( preDir, aDirPath, sDirPath );
+        copyFileWithPrefix( preDir , aDirPath, sDirPath + "_" );
     }
-    checkDir( sDirPath );
+    checkDir( "Result" );
     QString targetPath = mProjectDir + "/Result/" + sDirPath;
+    // Copy corresponding result dir to result dir under project folder
     copyRecursively( aDirPath, targetPath );
+    QDir dir( aDirPath );
+    dir.removeRecursively();
     return targetPath;
 
 } // end of function DataManager::moveDir()
@@ -170,8 +173,11 @@ bool DataManager::copyFileWithPrefix
         }
     }
     else{
-        if( !QFile::copy(aSrcFilePath, aTgtFilePath ) )
+        if( !QFile::copy( aSrcFilePath, aTgtFilePath ) )
             return false;
+        else{
+            QFile::remove( aSrcFilePath );
+        }
     }
     return true;
 } // end of function DataManager::copyFileWithPrefix()
@@ -201,8 +207,11 @@ bool DataManager::copyRecursively
         }
     }
     else{
-        if( !QFile::copy(aSrcFilePath, aTgtFilePath ) )
+        if( !QFile::copy( aSrcFilePath, aTgtFilePath ) )
             return false;
+        else{
+            QFile::remove( aSrcFilePath );
+        }
     }
     return true;
 } // end of function DataManager::copyRecursively()
