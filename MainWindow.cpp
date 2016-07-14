@@ -141,10 +141,10 @@ void MainWindow::createToolBar()
     toolBar->addAction( addAction );
     toolBar->addAction( addDirectoryAction );
     toolBar->addAction( delAction );
-    toolBar->addAction( refreshAction );
+    //toolBar->addAction( refreshAction );
     toolBar->addAction( staAction );
-    toolBar->addAction( zoominAction );
-    toolBar->addAction( zoomoutAction );
+    //toolBar->addAction( zoominAction );
+    //toolBar->addAction( zoomoutAction );
     toolBar->addAction( stopAction );
     toolBar->addAction( saveLogAction );
 
@@ -281,6 +281,35 @@ void MainWindow::readFile
         readJpg( aFileName );
     }
     else{
+        if( file.open( QIODevice::ReadOnly | QIODevice::Text ) ){
+            QTableWidget* tableWidget = new QTableWidget();
+            int row = 0;
+            while( !file.atEnd() ){
+                QByteArray line = file.readLine();
+                QStringList colList = QString( line ).split( '\t' );
+
+                if( tableWidget->rowCount() < row + 1 )
+                    tableWidget->setRowCount( row + 1 );
+                if( tableWidget->columnCount() < colList.size() )
+                    tableWidget->setColumnCount( colList.size() );
+
+                for( int column = 0; column < colList.size(); column++ )
+                {
+                    QTableWidgetItem *newItem = new QTableWidgetItem( colList.at( column ) );
+                    newItem->setFlags( newItem->flags() ^ Qt::ItemIsEditable );
+                    tableWidget->setItem( row, column, newItem );
+                }
+                row++;
+            }
+            file.close();
+            tableWidget->setProperty( "tab_dir_fullpath", aFileName );
+            QStringList names = aFileName.split( "/" );
+            QString fileName = names.value( names.length() - 1 );
+            mUi->mTabWidget->addTab( tableWidget, fileName );
+            mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+        }
+
+        /*
         QTextEdit *textEdit = new QTextEdit();
         QString content;
         textEdit->clear();
@@ -298,9 +327,10 @@ void MainWindow::readFile
         QString fileName = names.value( names.length() - 1 );
         mUi->mTabWidget->addTab( textEdit, fileName );
         mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
-        //textEdit->sets
+        textEdit->setLineWrapMode(QTextEdit::NoWrap);
         textEdit->setReadOnly( true );
         textEdit->setTextInteractionFlags( Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard );
+        */
     }
 } // end of function MainWindow::readFile()
 
