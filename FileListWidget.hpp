@@ -35,6 +35,11 @@ public:
         QString aPath
         );
 
+    void addProjectDirectory
+        (
+        QString aPath
+        );
+
 public slots:
     void delFile();
 
@@ -73,6 +78,7 @@ signals:
 
 private:
     QTreeWidget *mTree;
+    QTreeWidgetItem *mRoot;
     QFileInfoList allfile( QTreeWidgetItem *aRoot, QString aPath );
 };
 

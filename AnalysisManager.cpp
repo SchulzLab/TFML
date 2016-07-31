@@ -110,6 +110,7 @@ void AnalysisManager::receiveFinished
     QString outputPath;
     outputPath = DataManager::getDataManager()->moveDir( mOutputPath, mProcessType );
     mProcessOutputDone( outputPath );
+    DataManager::getDataManager()->addResultPath( outputPath );
 
 } // end of function AnalysisManager::recieveFinished()
 
@@ -121,7 +122,14 @@ void AnalysisManager::analyseBedFile
     QString aFilePath
     )
 {
-    QString cmd = "Rscript /home/thsieh/Epigenetic_tool/bed_detail.R " + aFilePath;
+    QString cmd = "";
+    QStringList fileSuffix = aFilePath.split( "." );
+    if( fileSuffix.at( fileSuffix.size() - 1 ) == "bed" ){
+        cmd = "Rscript /home/thsieh/Epigenetic_tool/bed_detail.R " + aFilePath;
+    }
+    else{
+        cmd = "Rscript /home/thsieh/Epigenetic_tool/peak.R " + aFilePath;
+    }
     QStringList path = aFilePath.split( "/" );
     QString name = "analysis_" + path[ path.length() - 1 ];
     mOutputPath = QDir::currentPath() + '/' + name;

@@ -10,6 +10,7 @@
 #include "MainWindow.hpp"
 #include "ui_mainwindow.h"
 #include "PeakCallingDialog.hpp"
+#include "ProjectDialog.hpp"
 #include "TepicDialog.hpp"
 #include <iostream>
 #include <string>
@@ -51,6 +52,8 @@ MainWindow::~MainWindow()
 void MainWindow::createMenuBar()
 {
     // File Menu
+    QAction *newProject = new QAction( "&New project", this );
+    QAction *addProject = new QAction( "&Open project", this );
     QAction *addAction = new QAction( tr( "&Open file" ), this );
     QAction *addBedAction = new QAction( "Open bed file", this );
     QAction *addDirAction = new QAction( "Open directory", this );
@@ -60,6 +63,8 @@ void MainWindow::createMenuBar()
     quitAction->setShortcuts( QKeySequence::Quit );
 
     QMenu *fileMenu = mUi->mMenuBar->addMenu( tr( "&File" ) );
+    fileMenu->addAction( newProject );
+    fileMenu->addAction( addProject );
     fileMenu->addAction( addAction );
     fileMenu->addAction( addBedAction );
     fileMenu->addAction( addDirAction );
@@ -95,6 +100,8 @@ void MainWindow::createMenuBar()
     helpMenu->addAction(aboutQtAction);
 
     // Connect
+    connect( newProject, SIGNAL( triggered( bool ) ), this, SLOT( newProject() ) );
+    connect( addProject, SIGNAL( triggered( bool ) ), this, SLOT( addProject() ) );
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( addBedAction, SIGNAL( triggered( bool ) ), this, SLOT( addBedFile() ) );
     connect( addDirAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
@@ -172,7 +179,7 @@ void MainWindow::createFileListDock()
     mUi->mDockLeft->setWidget( mList );
     QString home = QDir().homePath();
     QString resultDir = home + "/Epigenetics_project/Result";
-    mResultList->addSubDirectory( resultDir );
+    //mResultList->addSubDirectory( resultDir );
 } // end of function MainWindow::createFileListDock()
 
 //---------------------------------------------------------------------------------
@@ -407,3 +414,43 @@ void MainWindow::handleFinished
     msgBox.setText( aMsg );
     msgBox.exec();
 } // end of function MainWindow::handleFinished()
+
+//---------------------------------------------------------------------------------
+//! Create dialog to create project
+//---------------------------------------------------------------------------------
+void MainWindow::newProject()
+{
+    ProjectDialog *dialog = new ProjectDialog();
+    dialog->exec();
+    QString projectName = DataManager::getDataManager()->getProjectName();
+    qInfo() << projectName;
+    mList->addProjectDirectory( projectName );
+    mResultList->addProjectDirectory( projectName );
+} // end of function MainWindow::newProject()
+
+//---------------------------------------------------------------------------------
+//! Create dialog to add
+//---------------------------------------------------------------------------------
+void MainWindow::addProject()
+{
+    QFileDialog *dialog = new QFileDialog();
+    QString fileName = dialog->getOpenFileName( this, tr( "select project file" ), DataManager::getDataManager()->getProjectHomePath(), tr("Project File(*.pro)") );
+    if( fileName != "" ) {
+        QStringList name = fileName.split( "." );
+        QString projectName = name[ 0 ];
+        DataManager::getDataManager()->loadProject( fileName );
+        QStringList fileList = DataManager::getDataManager()->getFileNameList();
+        QStringList resultList = DataManager::getDataManager()->getResultFileNameList();
+        name = projectName.split( "/" );
+        projectName = name[ name.length() - 1 ];
+        DataManager::getDataManager()->setActiveProject( projectName );
+        mList->addProjectDirectory( projectName );
+        mResultList->addProjectDirectory( projectName );
+        for( int i = 0; i < fileList.length(); i++ ){
+            mList->addDirectory( fileList.at( i ) );
+        }
+        for( int i = 0; i < resultList.length(); i++ ){
+            mResultList->addDirectory( resultList.at( i ) );
+        }
+    }
+} // end of function MainWindow::addProject()

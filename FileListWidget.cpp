@@ -97,16 +97,18 @@ void FileListWidget::addDirectory
         {
             QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
-            QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
+            QTreeWidgetItem *root = new QTreeWidgetItem( QStringList() << name << aPath );
             root->setToolTip( 0, aPath );
+            mRoot->addChild( root );
             allfile( root, aPath );
         }
         else if( s.st_mode & S_IFREG )
         {
             QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
-            QTreeWidgetItem *root = new QTreeWidgetItem( mTree, QStringList() << name << aPath );
+            QTreeWidgetItem *root = new QTreeWidgetItem( QStringList() << name << aPath );
             root->setToolTip( 1, aPath );
+            mRoot->addChild( root );
         }
     }
 } // end of function FileListWidget::addDirectory()
@@ -181,3 +183,17 @@ QTreeWidget* FileListWidget::getTree()
 {
    return mTree;
 } // end of function FileListWidget::getCurrentItem()
+
+//---------------------------------------------------------------------------------
+//! Add project directory
+//---------------------------------------------------------------------------------
+void FileListWidget::addProjectDirectory
+    (
+    QString aPath
+    )
+{
+    mRoot = new QTreeWidgetItem( mTree, QStringList() << aPath << aPath );
+    mRoot->setToolTip( 0, aPath );
+    mRoot->setCheckState( 1, Qt::Checked );
+    mRoot->setExpanded( true );
+} // end of function FileListWidget::addDirectory()

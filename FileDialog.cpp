@@ -63,6 +63,7 @@ void FileDialog::init()
 
     QStringList list = DataManager::getDataManager()->getFileNameList();
     mInputWidget = createInputWidgets();
+    mFileList->addProjectDirectory( DataManager::getDataManager()->getProjectName() );
     for( int i = 0; i < list.length(); i++ ){
         mFileList->addDirectory( list[ i ] );
     }

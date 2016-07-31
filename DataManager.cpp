@@ -53,30 +53,33 @@ DataManager* DataManager::getDataManager()
 //---------------------------------------------------------------------------------
 //! Check project dir and create if project dir not exist
 //---------------------------------------------------------------------------------
-void DataManager::checkProjectDir()
+void DataManager::checkProjectHomeDir()
 {
-    QString home = QDir().homePath();
-    mProjectDir = home + "/Epigenetics_project";
-
-    if( !QDir( mProjectDir ).exists() )
+    if( !QDir( getProjectHomePath() ).exists() )
     {
-        QDir().mkpath( mProjectDir );
+        QDir().mkpath( getProjectHomePath() );
     }
-} // end of function DataManager::checkProjectDir()
+} // end of function DataManager::checkProjectHomeDir()
 
 //---------------------------------------------------------------------------------
 //! Check Log dir and create if log dir not exist
 //---------------------------------------------------------------------------------
-void DataManager::checkDir
+bool DataManager::checkDir
     (
     QString aDir
     )
 {
-    QString dirPath = mProjectDir + "/" + aDir;
+    bool result = true;
+    QString dirPath = getProjectPath() + "/" + aDir;
     if( !QDir( dirPath ).exists() )
     {
         QDir().mkpath( dirPath );
     }
+    else
+    {
+        result = false;
+    }
+    return result;
 
 } // end of function DataManager::checkLogDir()
 
@@ -88,9 +91,9 @@ void DataManager::saveLog
     QString aLog
     )
 {
-    checkProjectDir();
+    checkProjectHomeDir();
     checkDir( "Log" );
-    mLogDir = mProjectDir + "/Log";
+    mLogDir = getProjectHomePath() + "/Log";
     QDateTime dateTime = QDateTime().currentDateTime();
     QString dateTimeString = dateTime.toString( "yyyy_MM_dd_hh_mm_ss" );
     QString fileName = mLogDir + "/log_" + dateTimeString + ".txt";
@@ -116,8 +119,7 @@ QString DataManager::moveDir
     int aType
     )
 {
-    QString home = QDir().homePath();
-    mProjectDir = home + "/Epigenetics_project";
+    QString projectPath = getProjectPath();
     QStringList path = aDirPath.split( "/" );
     QString sDirPath = path[ path.length() - 1 ];
     QString preDir = path[ 0 ];
@@ -135,7 +137,7 @@ QString DataManager::moveDir
         copyFileWithPrefix( preDir , aDirPath, sDirPath + "_" );
     }
     checkDir( "Result" );
-    QString targetPath = mProjectDir + "/Result/" + sDirPath;
+    QString targetPath = projectPath + "/Result/" + sDirPath;
     // Copy corresponding result dir to result dir under project folder
     copyRecursively( aDirPath, targetPath );
     QDir dir( aDirPath );
@@ -225,12 +227,25 @@ void DataManager::addPath
     )
 {
     mFileList.append( aPath );
+    saveProjectFile();
 } // end of function DataManager::addPath()
 
-void DataManager::addFile(QString fileName)
+//---------------------------------------------------------------------------------
+//! Add dir or file path into filelist
+//---------------------------------------------------------------------------------
+void DataManager::addResultPath
+    (
+    QString aPath
+    )
 {
-    QFile file(fileName);
-    if (!file.open(QIODevice::ReadOnly | QIODevice::Text))
+    mResultFileList.append( aPath );
+    saveProjectFile();
+} // end of function DataManager::addResultPath()
+
+void DataManager::addFile( QString fileName )
+{
+    QFile file( fileName );
+    if( !file.open( QIODevice::ReadOnly | QIODevice::Text ) )
         return;
 
     QString content = file.readAll();
@@ -249,8 +264,15 @@ void DataManager::addFile(QString fileName)
 QStringList DataManager::getFileNameList()
 {
     return mFileList;
-} // end of function DataManager::addPath()
+} // end of function DataManager::getFileNameList()
 
+//---------------------------------------------------------------------------------
+//! Return result filelist
+//---------------------------------------------------------------------------------
+QStringList DataManager::getResultFileNameList()
+{
+    return mResultFileList;
+} // end of function DataManager::getResultFileNameList()
 
 void DataManager::getFilePath()
 {
@@ -258,3 +280,150 @@ void DataManager::getFilePath()
 
 }
 
+//---------------------------------------------------------------------------------
+//! Get project home dir
+//---------------------------------------------------------------------------------
+QString DataManager::getProjectHomePath()
+{
+    QString home = QDir().homePath();
+    QString homePath = home + '/' + cProjectHomeDir;
+
+    return homePath;
+} // end of function DataManager::getProjectHomePath()
+
+//---------------------------------------------------------------------------------
+//! Get project dir
+//---------------------------------------------------------------------------------
+QString DataManager::getProjectPath()
+{
+    QString home = getProjectHomePath();
+    QString projectPath = home + '/' + mProjectDir;
+
+    return projectPath;
+} // end of function DataManager::getProjectPath()
+
+//---------------------------------------------------------------------------------
+//! Get project file path
+//---------------------------------------------------------------------------------
+QString DataManager::getProjectFilePath()
+{
+    QString filePath = getProjectPath() + "/" + getProjectName() + ".pro";
+
+    return filePath;
+} // end of function DataManager::getProjectFilePath()
+
+//---------------------------------------------------------------------------------
+//! Get project dir
+//---------------------------------------------------------------------------------
+QString DataManager::getProjectName()
+{
+    return mProjectDir;
+} // end of function DataManager::getProjectName()
+
+//---------------------------------------------------------------------------------
+//! Create project dir
+//---------------------------------------------------------------------------------
+bool DataManager::createProjectDir
+    (
+    QString aDir
+    )
+{
+    bool result = true;
+    result = checkDir( aDir );
+    checkProjectHomeDir();
+    checkDir( "Log" );
+    QString fileName = getProjectFilePath();
+
+    QFile file( fileName );
+    file.open( QIODevice::WriteOnly );
+    file.close();
+    QStringList nameList = aDir.split( "/" );
+    mProjectDir = nameList.at( nameList.length() - 1 );
+    return result;
+} // end of function DataManager::createProjectDir()
+
+//---------------------------------------------------------------------------------
+//! Set active project
+//---------------------------------------------------------------------------------
+void DataManager::setActiveProject
+    (
+    QString aDir
+    )
+{
+    mProjectDir = aDir;
+} // end of function DataManager::setActiveProject()
+
+//---------------------------------------------------------------------------------
+//! Load project
+//---------------------------------------------------------------------------------
+bool DataManager::loadProject
+    (
+    QString aFilePath
+    )
+{
+    bool result = true;
+    int projectIdx = 0;
+    int fileIdx = 0;
+    int resultIdx = 0;
+    int index = 0;
+    QStringList textList;
+    QFile file( aFilePath );
+    if( !file.open( QIODevice::ReadOnly ) ){
+        result = false;
+    }
+
+    QTextStream text( &file );
+
+    while( !text.atEnd() ){
+        QString line = text.readLine();
+        if( line == "Project name:" ){
+            projectIdx = index;
+        }
+        else if( line == "File directory:" ){
+            fileIdx = index;
+        }
+        else if( line == "Result directory:"){
+            resultIdx = index;
+        }
+        textList.append( line );
+        index++;
+    }
+    mFileList.clear();
+    for( int i = fileIdx + 1; i < resultIdx; i++ ){
+        mFileList.append( textList.at( i ) );
+        qInfo() << textList.at( i );
+    }
+
+    mResultFileList.clear();
+    for( int i = resultIdx + 1; i < index; i++ ){
+        mResultFileList.append( textList.at( i ) );
+        qInfo() << textList.at( i );
+    }
+
+    file.close();
+    return result;
+} // end of function DataManager::setActiveProject()
+
+//---------------------------------------------------------------------------------
+//! Save project file
+//---------------------------------------------------------------------------------
+void DataManager::saveProjectFile()
+{
+    QString projectFile = getProjectFilePath();
+    QFile file( projectFile );
+    file.open( QIODevice::WriteOnly );
+    QTextStream streamFileOut( &file );
+    streamFileOut.setCodec( "UTF-8" );
+    streamFileOut << "Project name:\n";
+    streamFileOut << mProjectDir + "\n";
+    streamFileOut << "File directory:\n";
+    for( int i = 0; i < mFileList.length(); i++ ){
+        streamFileOut << mFileList.at( i ) + "\n";
+    }
+    streamFileOut << "Result directory:\n";
+    for( int i = 0; i < mResultFileList.length(); i++ ){
+        streamFileOut << mResultFileList.at( i ) + "\n";
+    }
+    streamFileOut.flush();
+    file.close();
+} // end of function DataManager::saveProjectFile()

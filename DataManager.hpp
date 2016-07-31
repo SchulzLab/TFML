@@ -41,6 +41,11 @@ public:
         QString aPath
         );
 
+    void addResultPath
+        (
+        QString aPath
+        );
+
     void saveLog
         (
         QString aLog
@@ -54,14 +59,37 @@ public:
 
     QStringList getFileNameList();
 
+    QStringList getResultFileNameList();
+
+    QString getProjectHomePath();
+
+    QString getProjectPath();
+
+    bool createProjectDir
+        (
+        QString aDir
+        );
+
+    void setActiveProject
+        (
+        QString aDir
+        );
+
+    QString getProjectName();
+
+    bool loadProject
+        (
+        QString aFilePath
+        );
+
 private:
     DataManager();
 
     void getFilePath();
 
-    void checkProjectDir();
+    void checkProjectHomeDir();
 
-    void checkDir
+    bool checkDir
         (
         QString aDir
         );
@@ -80,6 +108,11 @@ private:
         const QString &aTgtFilePath,
         const QString &aPrefix
         );
+
+    QString getProjectFilePath();
+
+    void saveProjectFile();
+
 //----------------------------------------------------------------
 // Signals
 //----------------------------------------------------------------
@@ -92,6 +125,9 @@ signals:
 //----------------------------------------------------------------
 // Variables
 //----------------------------------------------------------------
+public:
+    const QString cProjectHomeDir = "Epigenetics_project";
+
 private:
     static DataManager* sDataManager;
     vector<string> *fileNameList;
@@ -99,6 +135,7 @@ private:
     QString mProjectDir;
     QString mLogDir;
     QStringList mFileList;
+    QStringList mResultFileList;
 };
 
 #endif // DATAMANAGER_H
