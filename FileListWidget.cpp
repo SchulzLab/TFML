@@ -137,6 +137,14 @@ void FileListWidget::delFile()
 } // end of function FileListWidget::delFile()
 
 //---------------------------------------------------------------------------------
+//! Delete all file or directory
+//---------------------------------------------------------------------------------
+void FileListWidget::delAll()
+{
+    mTree->clear();
+} // end of function FileListWidget::delFile()
+
+//---------------------------------------------------------------------------------
 //! Get current item in filelist
 //---------------------------------------------------------------------------------
 QTreeWidgetItem* FileListWidget::getCurrentItem()

@@ -61,8 +61,8 @@ void AnalysisManager::peakCalling
     QString peakCallingCmd = "bash /home/thsieh/JAMM-1.0.7.3/JAMM.sh " + aCmd;
     cout << peakCallingCmd.toStdString() << endl;
     mProcess->start( peakCallingCmd );
-    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
-    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ) );
+    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
+    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
 } // end of function AnalysisManager::peakCalling()
 
@@ -80,8 +80,8 @@ void AnalysisManager::tepic
     QDir::setCurrent( QStringLiteral("/home/thsieh/TEPIC-1.0.0/Code") );
     QString tepicCmd = "bash TEPIC.sh " + aCmd;
     mProcess->start( tepicCmd );
-    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
-    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ) );
+    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
+    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
 } // end of function AnalysisManager::peakCalling()
 
@@ -134,7 +134,7 @@ void AnalysisManager::analyseBedFile
     QString name = "analysis_" + path[ path.length() - 1 ];
     mOutputPath = QDir::currentPath() + '/' + name;
     mProcess->start( cmd );
-    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ) );
+    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 } // end of function AnalysisManager::analyzeBedFile()
 

@@ -29,6 +29,7 @@ DataManager::DataManager() : QObject()
 {
     cout << "DataManager()" << endl;
     fileNameList = new vector<string>();
+    mProjectDir = "";
 } // end of function DataManager::DataManager()
 
 //---------------------------------------------------------------------------------
@@ -351,6 +352,7 @@ void DataManager::setActiveProject
     )
 {
     mProjectDir = aDir;
+    hasActiveProject( true );
 } // end of function DataManager::setActiveProject()
 
 //---------------------------------------------------------------------------------

@@ -40,6 +40,8 @@ public:
         QString aPath
         );
 
+    void delAll();
+
 public slots:
     void delFile();
 

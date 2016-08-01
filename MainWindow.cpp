@@ -89,7 +89,12 @@ void MainWindow::createMenuBar()
     QAction *fileListAction = fileTb->toggleViewAction();
     QAction *resultListAction = resultTb->toggleViewAction();
     QAction *outputAction = outputTb->toggleViewAction();
-
+    if( DataManager::getDataManager()->getProjectName().isEmpty() ){
+        addAction->setEnabled( false );
+        addBedAction->setEnabled( false );
+        addDirAction->setEnabled( false );
+        toolsMenu->setEnabled( false );
+    }
     windowMenu->addAction( fileListAction );
     windowMenu->addAction( resultListAction );
     windowMenu->addAction( outputAction );
@@ -114,7 +119,12 @@ void MainWindow::createMenuBar()
     connect( outputAction, SIGNAL( triggered( bool ) ), mUi->mBottomDock, SLOT( setVisible( bool ) ) );
     connect( mUi->mBottomDock, SIGNAL( visibilityChanged( bool ) ), outputAction, SLOT( setChecked( bool ) ) );
     connect( quitAction, SIGNAL( triggered( bool ) ), this, SLOT( close() ) );
-    connect( aboutQtAction, SIGNAL(triggered( bool ) ), qApp, SLOT( aboutQt() ) );
+    connect( quitAction, SIGNAL( triggered( bool ) ), this, SLOT( close() ) );
+    connect( aboutQtAction, SIGNAL( triggered( bool ) ), qApp, SLOT( aboutQt() ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addAction, SLOT( setEnabled( bool ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addBedAction, SLOT( setEnabled( bool ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirAction, SLOT( setEnabled( bool ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), toolsMenu, SLOT( setEnabled( bool ) ) );
 
 } // end of function MainWindow::createMenuBar()
 
@@ -154,14 +164,19 @@ void MainWindow::createToolBar()
     //toolBar->addAction( zoomoutAction );
     toolBar->addAction( stopAction );
     toolBar->addAction( saveLogAction );
-
+    if( DataManager::getDataManager()->getProjectName().isEmpty() ){
+        addAction->setEnabled( false );
+        addDirectoryAction->setEnabled( false );
+    }
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( addDirectoryAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
     connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
     connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
     connect( saveLogAction, SIGNAL( triggered( bool ) ), this, SLOT( saveLog() ) );
-
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirectoryAction, SLOT( setEnabled( bool ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addAction, SLOT( setEnabled( bool ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), staAction, SLOT( setEnabled( bool ) ) );
 } // end of function MainWindow::createToolBar()
 
 //---------------------------------------------------------------------------------
@@ -423,7 +438,8 @@ void MainWindow::newProject()
     ProjectDialog *dialog = new ProjectDialog();
     dialog->exec();
     QString projectName = DataManager::getDataManager()->getProjectName();
-    qInfo() << projectName;
+    mList->delAll();
+    mResultList->delAll();
     mList->addProjectDirectory( projectName );
     mResultList->addProjectDirectory( projectName );
 } // end of function MainWindow::newProject()
@@ -444,7 +460,9 @@ void MainWindow::addProject()
         name = projectName.split( "/" );
         projectName = name[ name.length() - 1 ];
         DataManager::getDataManager()->setActiveProject( projectName );
+        mList->delAll();
         mList->addProjectDirectory( projectName );
+        mResultList->delAll();
         mResultList->addProjectDirectory( projectName );
         for( int i = 0; i < fileList.length(); i++ ){
             mList->addDirectory( fileList.at( i ) );
