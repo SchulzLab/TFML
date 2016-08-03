@@ -94,7 +94,7 @@ void DataManager::saveLog
 {
     checkProjectHomeDir();
     checkDir( "Log" );
-    mLogDir = getProjectHomePath() + "/Log";
+    mLogDir = getProjectPath() + "/Log";
     QDateTime dateTime = QDateTime().currentDateTime();
     QString dateTimeString = dateTime.toString( "yyyy_MM_dd_hh_mm_ss" );
     QString fileName = mLogDir + "/log_" + dateTimeString + ".txt";

@@ -12,6 +12,7 @@
 #include "PeakCallingDialog.hpp"
 #include "ProjectDialog.hpp"
 #include "TepicDialog.hpp"
+#include "IntegrateDataDialog.hpp"
 #include <iostream>
 #include <string>
 #include "DataManager.hpp"
@@ -81,6 +82,13 @@ void MainWindow::createMenuBar()
     toolsMenu->addAction( peakCallingAction );
     toolsMenu->addAction( tepicAction );
 
+    // Analyze Menu
+    QAction *integrateAction = new QAction( "Integrate data", this );
+
+    QMenu *analyzeMenu = mUi->mMenuBar->addMenu( "Analyze" );
+    analyzeMenu->addAction( integrateAction );
+
+
     // Windows Menu
     QMenu *windowMenu = mUi->mMenuBar->addMenu( tr( "&Window" ) );
     QToolBar *fileTb = addToolBar("File list");
@@ -94,6 +102,7 @@ void MainWindow::createMenuBar()
         addBedAction->setEnabled( false );
         addDirAction->setEnabled( false );
         toolsMenu->setEnabled( false );
+        analyzeMenu->setEnabled( false );
     }
     windowMenu->addAction( fileListAction );
     windowMenu->addAction( resultListAction );
@@ -112,6 +121,7 @@ void MainWindow::createMenuBar()
     connect( addDirAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
     connect( peakCallingAction, SIGNAL( triggered( bool ) ), this, SLOT( handlePeakCallingClicked() ) );
     connect( tepicAction, SIGNAL( triggered( bool ) ), this, SLOT( handleTepicClicked() ) );
+    connect( integrateAction, SIGNAL( triggered( bool ) ), this, SLOT( handleIntegrateClicked() ) );
     connect( fileListAction, SIGNAL( triggered( bool ) ), mUi->mDockLeft, SLOT( setVisible( bool ) ) );
     connect( mUi->mDockLeft, SIGNAL( visibilityChanged(bool)), fileListAction, SLOT( setChecked( bool ) ) );
     connect( resultListAction, SIGNAL( triggered( bool ) ), mUi->mDockResult, SLOT( setVisible( bool ) ) );
@@ -125,6 +135,7 @@ void MainWindow::createMenuBar()
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addBedAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), toolsMenu, SLOT( setEnabled( bool ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), analyzeMenu, SLOT( setEnabled( bool ) ) );
 
 } // end of function MainWindow::createMenuBar()
 
@@ -309,9 +320,8 @@ void MainWindow::readFile
             while( !file.atEnd() ){
                 QByteArray line = file.readLine();
                 QStringList colList = QString( line ).split( '\t' );
-
                 if( tableWidget->rowCount() < row + 1 )
-                    tableWidget->setRowCount( row + 1 );
+                    tableWidget->setRowCount( row );
                 if( tableWidget->columnCount() < colList.size() )
                     tableWidget->setColumnCount( colList.size() );
 
@@ -319,12 +329,18 @@ void MainWindow::readFile
                 {
                     QTableWidgetItem *newItem = new QTableWidgetItem( colList.at( column ) );
                     newItem->setFlags( newItem->flags() ^ Qt::ItemIsEditable );
-                    tableWidget->setItem( row, column, newItem );
+                    if( row == 0 ){
+                        tableWidget->setHorizontalHeaderItem( column, newItem );
+                    }
+                    else{
+                        tableWidget->setItem( row - 1, column, newItem );
+                    }
                 }
                 row++;
             }
             file.close();
             tableWidget->setProperty( "tab_dir_fullpath", aFileName );
+            tableWidget->resizeColumnsToContents();
             QStringList names = aFileName.split( "/" );
             QString fileName = names.value( names.length() - 1 );
             mUi->mTabWidget->addTab( tableWidget, fileName );
@@ -440,6 +456,7 @@ void MainWindow::newProject()
     QString projectName = DataManager::getDataManager()->getProjectName();
     mList->delAll();
     mResultList->delAll();
+    DataManager::getDataManager()->setActiveProject( projectName );
     mList->addProjectDirectory( projectName );
     mResultList->addProjectDirectory( projectName );
 } // end of function MainWindow::newProject()
@@ -472,3 +489,12 @@ void MainWindow::addProject()
         }
     }
 } // end of function MainWindow::addProject()
+
+//---------------------------------------------------------------------------------
+//! Show dialog for integrating data
+//---------------------------------------------------------------------------------
+void MainWindow::handleIntegrateClicked()
+{
+    IntegrateDataDialog *dialog = new IntegrateDataDialog();
+    dialog->exec();
+} // end of function MainWindow::handleIntegrateClicked()

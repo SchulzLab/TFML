@@ -67,7 +67,7 @@ void AnalysisManager::peakCalling
 } // end of function AnalysisManager::peakCalling()
 
 //---------------------------------------------------------------------------------
-//! Execute peak calling
+//! Execute tepic
 //---------------------------------------------------------------------------------
 void AnalysisManager::tepic
     (
@@ -83,7 +83,7 @@ void AnalysisManager::tepic
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
-} // end of function AnalysisManager::peakCalling()
+} // end of function AnalysisManager::tepic()
 
 //---------------------------------------------------------------------------------
 //! Send signal to  the log widget in mainwindow to update log
@@ -149,3 +149,23 @@ void AnalysisManager::killProcess()
     }
 
 } // end of function AnalysisManager::killProcess()
+
+//---------------------------------------------------------------------------------
+//! Execute integrate data
+//---------------------------------------------------------------------------------
+void AnalysisManager::integrateData
+    (
+    QString aCmd,
+    QString aOutputPath
+    )
+{
+    mProcessType = PROCESS_TYPE::INTEGRATE_DATA;
+    mOutputPath = "/home/thsieh/Epigenetic_tool/" + aOutputPath;
+    QDir::setCurrent( QStringLiteral("/home/thsieh/Epigenetic_tool") );
+    QString integrateCmd = "bash ./generateM.sh '\"''\"'' '\"''\"' " + aCmd + " " + aOutputPath;
+    qInfo() << integrateCmd;
+    mProcess->start( integrateCmd );
+    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
+    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
+
+} // end of function AnalysisManager::integrateData()

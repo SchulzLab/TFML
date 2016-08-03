@@ -34,7 +34,7 @@ TepicDialog::TepicDialog
     layout->addWidget( mInputWidgetBox );
     layout->addWidget( mExtendInputWidgetBox );
     layout->addWidget( mButtonBox );
-    layout->setSizeConstraint( QLayout::SetFixedSize);
+    layout->setSizeConstraint( QLayout::SetFixedSize );
     setLayout( layout );
 
     setWindowTitle( "TEPIC" );

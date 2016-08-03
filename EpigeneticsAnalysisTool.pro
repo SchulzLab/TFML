@@ -23,7 +23,8 @@ SOURCES += Main.cpp\
     PeakCallingDialog.cpp \
     TepicDialog.cpp \
     FileDialog.cpp \
-    ProjectDialog.cpp
+    ProjectDialog.cpp \
+    IntegrateDataDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     Dialog.hpp \
@@ -34,6 +35,7 @@ HEADERS  += MainWindow.hpp \
     PeakCallingDialog.hpp \
     TepicDialog.hpp \
     FileDialog.hpp \
-    ProjectDialog.hpp
+    ProjectDialog.hpp \
+    IntegrateDataDialog.hpp
 
 FORMS    += MainWindow.ui

@@ -78,6 +78,9 @@ private slots:
     void addProject();
 
     void newProject();
+
+    void handleIntegrateClicked();
+
 //----------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------

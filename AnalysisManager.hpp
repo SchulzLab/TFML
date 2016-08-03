@@ -23,7 +23,8 @@ public:
     enum PROCESS_TYPE
     {
         PEAK_CALLING = 0,
-        TEPIC = 1
+        TEPIC = 1,
+        INTEGRATE_DATA = 2
     };
 //----------------------------------------------------------------
 // Functions
@@ -50,6 +51,11 @@ public:
         QString aFilePath
         );
 
+    void integrateData
+        (
+        QString aCmd,
+        QString aOutputPath
+        );
 private:
     AnalysisManager();
 
