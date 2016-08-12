@@ -30,7 +30,7 @@ FileListWidget::FileListWidget
     layout->setContentsMargins( 0, 0, 0, 0 );
     layout->addWidget( mTree );
     setLayout( layout );
-
+    mTree->setFocusPolicy( Qt::TabFocus );
     connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( doubleClickedEvent( QTreeWidgetItem*, int ) ) );
     connect( mTree, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
 } // end of function FileListWidget::FileListWidget()
@@ -133,8 +133,19 @@ void FileListWidget::addSubDirectory
 //---------------------------------------------------------------------------------
 void FileListWidget::delFile()
 {
-    qDeleteAll( mTree->selectedItems());
+    qInfo() << mTree->selectedItems().length();
+    QTreeWidgetItem *item = mTree->selectedItems().at( 0 );
+    mTree->removeItemWidget(item, 1);
+    //mRoot->removeChild( item );
 } // end of function FileListWidget::delFile()
+
+void FileListWidget::DeleteItem(QTreeWidgetItem *item) {
+  if (!item) return;
+  for(int i=item->childCount()-1; i>=0; i--) {
+    DeleteItem(item->child(i));
+  }
+  delete item;
+}
 
 //---------------------------------------------------------------------------------
 //! Delete all file or directory
@@ -190,7 +201,7 @@ void FileListWidget::doubleClickedEvent
 QTreeWidget* FileListWidget::getTree()
 {
    return mTree;
-} // end of function FileListWidget::getCurrentItem()
+} // end of function FileListWidget::getTree()
 
 //---------------------------------------------------------------------------------
 //! Add project directory

@@ -169,3 +169,23 @@ void AnalysisManager::integrateData
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
 } // end of function AnalysisManager::integrateData()
+
+//---------------------------------------------------------------------------------
+//! Execute integrate data
+//---------------------------------------------------------------------------------
+void AnalysisManager::diffLearning
+    (
+    QString aCmd,
+    QString aOutputPath
+    )
+{
+    mProcessType = PROCESS_TYPE::DIFF_LEARNING;
+    mOutputPath = "/home/thsieh/Epigenetic_tool/" + aOutputPath;
+    QDir::setCurrent( QStringLiteral("/home/thsieh/Epigenetic_tool") );
+    QString cmd = "Rscript preprocessLearning.R " + aCmd;
+    qInfo() << cmd;
+    mProcess->start( cmd );
+    connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
+    connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
+
+} // end of function AnalysisManager::diffLearning()

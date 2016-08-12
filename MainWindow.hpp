@@ -43,6 +43,8 @@ private slots:
 
     void delFile();
 
+    void delResultFile();
+
     void addBedFile();
 
     void handlePeakCallingClicked();
@@ -70,9 +72,14 @@ private slots:
 
     void saveLog();
 
-    void handleFinished
+    void handleLogFinished
         (
         QString aMsg
+        );
+
+    void handleFinished
+        (
+        QString aPath
         );
 
     void addProject();
@@ -80,6 +87,10 @@ private slots:
     void newProject();
 
     void handleIntegrateClicked();
+
+    void handleDiffLearnClicked();
+
+    void refreshProject();
 
 //----------------------------------------------------------------
 // Functions
@@ -94,6 +105,11 @@ private:
     void createFileListDock();
 
     void readJpg
+        (
+        QString fileName
+        );
+
+    void readBed
         (
         QString fileName
         );

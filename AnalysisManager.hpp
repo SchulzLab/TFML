@@ -24,7 +24,8 @@ public:
     {
         PEAK_CALLING = 0,
         TEPIC = 1,
-        INTEGRATE_DATA = 2
+        INTEGRATE_DATA = 2,
+        DIFF_LEARNING = 3
     };
 //----------------------------------------------------------------
 // Functions
@@ -56,6 +57,13 @@ public:
         QString aCmd,
         QString aOutputPath
         );
+
+    void diffLearning
+        (
+        QString aCmd,
+        QString aOutputPath
+        );
+
 private:
     AnalysisManager();
 

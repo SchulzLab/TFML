@@ -24,7 +24,8 @@ SOURCES += Main.cpp\
     TepicDialog.cpp \
     FileDialog.cpp \
     ProjectDialog.cpp \
-    IntegrateDataDialog.cpp
+    IntegrateDataDialog.cpp \
+    DiffLearnDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     Dialog.hpp \
@@ -36,6 +37,7 @@ HEADERS  += MainWindow.hpp \
     TepicDialog.hpp \
     FileDialog.hpp \
     ProjectDialog.hpp \
-    IntegrateDataDialog.hpp
+    IntegrateDataDialog.hpp \
+    DiffLearnDialog.hpp
 
 FORMS    += MainWindow.ui

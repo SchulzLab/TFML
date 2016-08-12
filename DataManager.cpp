@@ -198,7 +198,7 @@ bool DataManager::copyRecursively
     if( srcFileInfo.isDir() ){
         QDir targetDir( aTgtFilePath );
         targetDir.cdUp();
-        if( !targetDir.mkdir( QFileInfo( aTgtFilePath ).fileName() ) )
+        if( !targetDir.mkpath( QFileInfo( aTgtFilePath ).fileName() ) )
             return false;
         QDir sourceDir( aSrcFilePath );
         QStringList fileNames = sourceDir.entryList( QDir::Files | QDir::Dirs | QDir::NoDotAndDotDot | QDir::Hidden | QDir::System );
@@ -220,6 +220,21 @@ bool DataManager::copyRecursively
 } // end of function DataManager::copyRecursively()
 
 //---------------------------------------------------------------------------------
+//! Check if path already in list
+//---------------------------------------------------------------------------------
+bool DataManager::checkPath
+    (
+    QString aPath
+    )
+{
+    bool result = true;
+    if( mResultFileList.indexOf(aPath) == -1 ){
+        result = false;
+    }
+    return result;
+} // end of function DataManager::checkPath()
+
+//---------------------------------------------------------------------------------
 //! Add dir or file path into filelist
 //---------------------------------------------------------------------------------
 void DataManager::addPath
@@ -227,21 +242,62 @@ void DataManager::addPath
     QString aPath
     )
 {
-    mFileList.append( aPath );
-    saveProjectFile();
+    if( mFileList.indexOf(aPath) == -1 ){
+        mFileList.append( aPath );
+        saveProjectFile();
+    }
 } // end of function DataManager::addPath()
 
 //---------------------------------------------------------------------------------
-//! Add dir or file path into filelist
+//! Delete dir or file path from filelist
+//---------------------------------------------------------------------------------
+void DataManager::delPath
+    (
+    QString aPath
+    )
+{
+    int len = mFileList.length();
+    for( int i = 0; i < len; i++ ){
+        if( mFileList.at( i ) == aPath ){
+            qInfo() << i << mFileList[i];
+            mFileList.removeAt( i );
+            break;
+        }
+    }
+    saveProjectFile();
+} // end of function DataManager::delPath()
+
+//---------------------------------------------------------------------------------
+//! Add dir or file path into resultlist
 //---------------------------------------------------------------------------------
 void DataManager::addResultPath
     (
     QString aPath
     )
 {
-    mResultFileList.append( aPath );
-    saveProjectFile();
+    if( mResultFileList.indexOf(aPath) == -1 ){
+        mResultFileList.append( aPath );
+        saveProjectFile();
+    }
 } // end of function DataManager::addResultPath()
+
+//---------------------------------------------------------------------------------
+//! Delete dir or file path from resultlist
+//---------------------------------------------------------------------------------
+void DataManager::delResultPath
+    (
+    QString aPath
+    )
+{
+    int len = mResultFileList.length();
+    for( int i = 0; i < len; i++ ){
+        if( mResultFileList.at( i ) == aPath ){
+            mResultFileList.removeAt( i );
+            break;
+        }
+    }
+    saveProjectFile();
+} // end of function DataManager::delPath()
 
 void DataManager::addFile( QString fileName )
 {

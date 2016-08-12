@@ -82,6 +82,7 @@ private:
     QTreeWidget *mTree;
     QTreeWidgetItem *mRoot;
     QFileInfoList allfile( QTreeWidgetItem *aRoot, QString aPath );
+    void DeleteItem(QTreeWidgetItem *item);
 };
 
 #endif // FILELISTWIDGET_H

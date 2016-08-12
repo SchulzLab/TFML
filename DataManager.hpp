@@ -46,6 +46,16 @@ public:
         QString aPath
         );
 
+    void delPath
+        (
+        QString aPath
+        );
+
+    void delResultPath
+        (
+        QString aPath
+        );
+
     void saveLog
         (
         QString aLog
@@ -82,6 +92,13 @@ public:
         QString aFilePath
         );
 
+    QString getProjectFilePath();
+
+    bool checkPath
+        (
+        QString aPath
+        );
+
 private:
     DataManager();
 
@@ -109,8 +126,6 @@ private:
         const QString &aPrefix
         );
 
-    QString getProjectFilePath();
-
     void saveProjectFile();
 
 //----------------------------------------------------------------
@@ -121,6 +136,8 @@ signals:
         (
         QString aMsg
         );
+
+    void projectChanged();
 
     bool hasActiveProject( bool );
 

@@ -13,6 +13,7 @@
 #include "ProjectDialog.hpp"
 #include "TepicDialog.hpp"
 #include "IntegrateDataDialog.hpp"
+#include "DiffLearnDialog.hpp"
 #include <iostream>
 #include <string>
 #include "DataManager.hpp"
@@ -37,7 +38,7 @@ MainWindow::MainWindow
     createToolBar();
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mUpdateLog( QString ) ), this, SLOT( updateLogText( QString ) ) );
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
-    connect( DataManager::getDataManager(), SIGNAL( processFinished( QString ) ), this, SLOT( handleFinished( QString ) ) );
+    connect( DataManager::getDataManager(), SIGNAL( processFinished( QString ) ), this, SLOT( handleLogFinished( QString ) ) );
     mUi->textEdit->setAlignment(Qt::AlignCenter);
     setWindowTitle( "Epigenetics analysis tool" );
 } // end of function MainWindow::MainWindow()
@@ -84,10 +85,11 @@ void MainWindow::createMenuBar()
 
     // Analyze Menu
     QAction *integrateAction = new QAction( "Integrate data", this );
+    QAction *diffAction = new QAction( "Differentiate learning", this );
 
     QMenu *analyzeMenu = mUi->mMenuBar->addMenu( "Analyze" );
     analyzeMenu->addAction( integrateAction );
-
+    analyzeMenu->addAction( diffAction );
 
     // Windows Menu
     QMenu *windowMenu = mUi->mMenuBar->addMenu( tr( "&Window" ) );
@@ -122,6 +124,7 @@ void MainWindow::createMenuBar()
     connect( peakCallingAction, SIGNAL( triggered( bool ) ), this, SLOT( handlePeakCallingClicked() ) );
     connect( tepicAction, SIGNAL( triggered( bool ) ), this, SLOT( handleTepicClicked() ) );
     connect( integrateAction, SIGNAL( triggered( bool ) ), this, SLOT( handleIntegrateClicked() ) );
+    connect( diffAction, SIGNAL( triggered( bool ) ), this, SLOT( handleDiffLearnClicked() ) );
     connect( fileListAction, SIGNAL( triggered( bool ) ), mUi->mDockLeft, SLOT( setVisible( bool ) ) );
     connect( mUi->mDockLeft, SIGNAL( visibilityChanged(bool)), fileListAction, SLOT( setChecked( bool ) ) );
     connect( resultListAction, SIGNAL( triggered( bool ) ), mUi->mDockResult, SLOT( setVisible( bool ) ) );
@@ -155,6 +158,7 @@ void MainWindow::createToolBar()
     QAction *zoomoutAction = new QAction( "Zoom out", this );
     QAction *stopAction = new QAction( "Stop", this );
     QAction *saveLogAction = new QAction( "Save log", this );
+    QAction *refreshListAction = new QAction( "Refresh list", this );
 
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     addDirectoryAction->setIcon( QIcon::fromTheme( "folder-open" ) );
@@ -162,6 +166,7 @@ void MainWindow::createToolBar()
     zoominAction->setIcon( QIcon::fromTheme( "zoom-in" ) );
     zoomoutAction->setIcon( QIcon::fromTheme( "zoom-out" ) );
     refreshAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
+    refreshListAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
     stopAction->setIcon( QIcon::fromTheme( "process-stop" ) );
     saveLogAction->setIcon( QIcon::fromTheme( "document-save" ) );
@@ -169,10 +174,10 @@ void MainWindow::createToolBar()
     toolBar->addAction( addAction );
     toolBar->addAction( addDirectoryAction );
     toolBar->addAction( delAction );
-    //toolBar->addAction( refreshAction );
+    toolBar->addAction( refreshListAction );
     toolBar->addAction( staAction );
-    //toolBar->addAction( zoominAction );
-    //toolBar->addAction( zoomoutAction );
+    toolBar->addAction( zoominAction );
+    toolBar->addAction( zoomoutAction );
     toolBar->addAction( stopAction );
     toolBar->addAction( saveLogAction );
     if( DataManager::getDataManager()->getProjectName().isEmpty() ){
@@ -182,9 +187,11 @@ void MainWindow::createToolBar()
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( addDirectoryAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
     connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
+    connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delResultFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
     connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
     connect( saveLogAction, SIGNAL( triggered( bool ) ), this, SLOT( saveLog() ) );
+    connect( refreshListAction, SIGNAL( triggered( bool ) ), this, SLOT( refreshProject() ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirectoryAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), staAction, SLOT( setEnabled( bool ) ) );
@@ -199,12 +206,13 @@ void MainWindow::createFileListDock()
     mList->setContentsMargins( 9, 0, 0, 0 );
     mResultList = mUi->mResultFileList;
     mResultList->setContentsMargins( 9, 0, 0, 0 );
-    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), mResultList, SLOT( addDirectory( QString ) ) );
+    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), this, SLOT( handleFinished( QString ) ) );
     connect( mList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     connect( mResultList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     mUi->mDockLeft->setWidget( mList );
     QString home = QDir().homePath();
     QString resultDir = home + "/Epigenetics_project/Result";
+
     //mResultList->addSubDirectory( resultDir );
 } // end of function MainWindow::createFileListDock()
 
@@ -230,6 +238,20 @@ void MainWindow::delFile()
     QTreeWidgetItem *item = mList->getCurrentItem();
     if( item != NULL ){
         mList->delFile();
+        DataManager::getDataManager()->delPath( item->text( 1 ) );
+    }
+    mResultList->clearFocus();
+} // end of function MainWindow::delFile()
+
+//---------------------------------------------------------------------------------
+//! Delete file in the file list
+//---------------------------------------------------------------------------------
+void MainWindow::delResultFile()
+{
+    QTreeWidgetItem *item = mResultList->getCurrentItem();
+    if( item != NULL ){
+        mResultList->delFile();
+        DataManager::getDataManager()->delResultPath( item->text( 1 ) );
     }
 
 } // end of function MainWindow::delFile()
@@ -298,22 +320,24 @@ void MainWindow::readFile
         }
     }
 
-    QFile file( aFileName );
-    if( !file.exists() ){
-        qDebug() << "NO existe el archivo "<< aFileName;
-    }else{
-        qDebug() << aFileName <<" encontrado...";
-    }
-
     QStringList tmp = aFileName.split("/");
     QString name = tmp[ tmp.length() - 1 ];
     QStringList nameSplit = name.split(".");
     name = nameSplit[ nameSplit.length() - 1 ];
 
-    if( name == "jpg"){
+    if( name == "jpg" || name == "png" ){
         readJpg( aFileName );
     }
+    else if( name == "bed" || name == "narrowPeak" ){
+        readBed( aFileName );
+    }
     else{
+        QFile file( aFileName );
+        if( !file.exists() ){
+            qDebug() << "NO existe el archivo "<< aFileName;
+        }else{
+            qDebug() << aFileName <<" encontrado...";
+        }
         if( file.open( QIODevice::ReadOnly | QIODevice::Text ) ){
             QTableWidget* tableWidget = new QTableWidget();
             int row = 0;
@@ -414,16 +438,69 @@ void MainWindow::readJpg
     )
 {
     QLabel *label = new QLabel();
-    label->setPixmap( aFileName );
+    QPixmap *pix = new QPixmap( aFileName );
+    int w = label->width();
+    int h = label->height();
+    label->setPixmap( pix->scaled(500,500,Qt::KeepAspectRatio) );
     label->show();
     label->setProperty( "tab_dir_fullpath", aFileName );
     QScrollArea *area = new QScrollArea();
-    area->setWidget(label);
+    area->setWidget( label );
     QStringList names = aFileName.split( "/" );
     QString fileName = names.value( names.length() - 1 );
     mUi->mTabWidget->addTab( area, fileName );
+
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+    /*QWidget *a = mUi->mTabWidget->widget(mUi->mTabWidget->count() - 1);
+    QScrollArea *b = (QScrollArea*) a;
+    QLabel *c = (QLabel*) b->takeWidget();
+    c->setPixmap( c->pixmap()->scaled(1000,1000,Qt::KeepAspectRatio));*/
+    //QLabel a = (QLabel)((QScrollArea) mUi->mTabWidget->widget(mUi->mTabWidget->count() - 1)).takeWidget();
+    //((QLabel)().takeWidget()).setPixmap(((QLabel)((QScrollArea) mUi->mTabWidget->widget(mUi->mTabWidget->count() - 1)).takeWidget()).pixmap()->scaled(1000,1000,Qt::KeepAspectRatio));
 } // end of function MainWindow::readJpg()
+
+//---------------------------------------------------------------------------------
+//! Read bed file
+//---------------------------------------------------------------------------------
+void MainWindow::readBed
+    (
+    QString aFileName
+    )
+{
+    QFile file( aFileName );
+    if( !file.exists() ){
+        qDebug() << "NO existe el archivo "<< aFileName;
+    }else{
+        qDebug() << aFileName <<" encontrado...";
+    }
+    if( file.open( QIODevice::ReadOnly | QIODevice::Text ) ){
+        QTableWidget* tableWidget = new QTableWidget();
+        int row = 0;
+        while( !file.atEnd() ){
+            QByteArray line = file.readLine();
+            QStringList colList = QString( line ).split( '\t' );
+            if( tableWidget->rowCount() < row + 1 )
+                tableWidget->setRowCount( row + 1);
+            if( tableWidget->columnCount() < colList.size() )
+                tableWidget->setColumnCount( colList.size() );
+
+            for( int column = 0; column < colList.size(); column++ )
+            {
+                QTableWidgetItem *newItem = new QTableWidgetItem( colList.at( column ) );
+                newItem->setFlags( newItem->flags() ^ Qt::ItemIsEditable );
+                tableWidget->setItem( row, column, newItem );
+            }
+            row++;
+        }
+        file.close();
+        tableWidget->setProperty( "tab_dir_fullpath", aFileName );
+        tableWidget->resizeColumnsToContents();
+        QStringList names = aFileName.split( "/" );
+        QString fileName = names.value( names.length() - 1 );
+        mUi->mTabWidget->addTab( tableWidget, fileName );
+        mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+    }
+} // end of function MainWindow::readBed()
 
 //---------------------------------------------------------------------------------
 //! Save log file
@@ -434,9 +511,9 @@ void MainWindow::saveLog()
 } // end of function MainWindow::saveLog()
 
 //---------------------------------------------------------------------------------
-//! Handle process finished
+//! Handle log process finished
 //---------------------------------------------------------------------------------
-void MainWindow::handleFinished
+void MainWindow::handleLogFinished
     (
     QString aMsg
     )
@@ -444,6 +521,22 @@ void MainWindow::handleFinished
     QMessageBox msgBox;
     msgBox.setText( aMsg );
     msgBox.exec();
+} // end of function MainWindow::handleLogFinished()
+
+//---------------------------------------------------------------------------------
+//! Handle log process finished
+//---------------------------------------------------------------------------------
+void MainWindow::handleFinished
+    (
+    QString aPath
+    )
+{
+    if( DataManager::getDataManager()->checkPath( aPath ) ){
+        refreshProject();
+    }
+    else{
+        mResultList->addDirectory( aPath );
+    }
 } // end of function MainWindow::handleFinished()
 
 //---------------------------------------------------------------------------------
@@ -468,7 +561,7 @@ void MainWindow::addProject()
 {
     QFileDialog *dialog = new QFileDialog();
     QString fileName = dialog->getOpenFileName( this, tr( "select project file" ), DataManager::getDataManager()->getProjectHomePath(), tr("Project File(*.pro)") );
-    if( fileName != "" ) {
+    if( fileName != "" ){
         QStringList name = fileName.split( "." );
         QString projectName = name[ 0 ];
         DataManager::getDataManager()->loadProject( fileName );
@@ -491,6 +584,31 @@ void MainWindow::addProject()
 } // end of function MainWindow::addProject()
 
 //---------------------------------------------------------------------------------
+//! Create dialog to add
+//---------------------------------------------------------------------------------
+void MainWindow::refreshProject()
+{
+    QString fileName = DataManager::getDataManager()->getProjectFilePath();
+    QStringList name = fileName.split( "." );
+    QString projectName = name[ 0 ];
+    DataManager::getDataManager()->loadProject( fileName );
+    QStringList fileList = DataManager::getDataManager()->getFileNameList();
+    QStringList resultList = DataManager::getDataManager()->getResultFileNameList();
+    name = projectName.split( "/" );
+    projectName = name[ name.length() - 1 ];
+    mList->delAll();
+    mList->addProjectDirectory( projectName );
+    mResultList->delAll();
+    mResultList->addProjectDirectory( projectName );
+    for( int i = 0; i < fileList.length(); i++ ){
+        mList->addDirectory( fileList.at( i ) );
+    }
+    for( int i = 0; i < resultList.length(); i++ ){
+        mResultList->addDirectory( resultList.at( i ) );
+    }
+} // end of function MainWindow::refreshProject()
+
+//---------------------------------------------------------------------------------
 //! Show dialog for integrating data
 //---------------------------------------------------------------------------------
 void MainWindow::handleIntegrateClicked()
@@ -498,3 +616,12 @@ void MainWindow::handleIntegrateClicked()
     IntegrateDataDialog *dialog = new IntegrateDataDialog();
     dialog->exec();
 } // end of function MainWindow::handleIntegrateClicked()
+
+//---------------------------------------------------------------------------------
+//! Show dialog for differentiating learning
+//---------------------------------------------------------------------------------
+void MainWindow::handleDiffLearnClicked()
+{
+    DiffLearnDialog *dialog = new DiffLearnDialog();
+    dialog->exec();
+} // end of function MainWindow::handleDiffLearnClicked()
