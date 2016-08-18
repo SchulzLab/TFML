@@ -18,6 +18,7 @@
 #include <string>
 #include "DataManager.hpp"
 #include "AnalysisManager.hpp"
+#include <QtWebEngineWidgets/QtWebEngineWidgets>
 
 using namespace std;
 
@@ -195,6 +196,8 @@ void MainWindow::createToolBar()
     connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
     connect( saveLogAction, SIGNAL( triggered( bool ) ), this, SLOT( saveLog() ) );
     connect( refreshListAction, SIGNAL( triggered( bool ) ), this, SLOT( refreshProject() ) );
+    connect( zoominAction, SIGNAL( triggered( bool ) ), this, SLOT( zoomIn() ) );
+    connect( zoomoutAction, SIGNAL( triggered( bool ) ), this, SLOT( zoomOut() ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirectoryAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), staAction, SLOT( setEnabled( bool ) ) );
@@ -331,8 +334,11 @@ void MainWindow::readFile
     if( name == "jpg" || name == "png" ){
         readJpg( aFileName );
     }
-    else if( name == "bed" || name == "narrowPeak" ){
+    else if( name == "bed" || name == "narrowPeak" || name == "csv" ){
         readBed( aFileName );
+    }
+    else if( name == "html"){
+        readHtmlFile( aFileName );
     }
     else{
         QFile file( aFileName );
@@ -373,29 +379,6 @@ void MainWindow::readFile
             mUi->mTabWidget->addTab( tableWidget, fileName );
             mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
         }
-
-        /*
-        QTextEdit *textEdit = new QTextEdit();
-        QString content;
-        textEdit->clear();
-        if( file.open( QIODevice::ReadOnly | QIODevice::Text ) ){
-            QTextStream stream( &file );
-            while ( !stream.atEnd() ){
-                content = stream.readAll();
-                textEdit->setText( textEdit->toPlainText() + content );
-            }
-        }
-        file.close();
-        textEdit->setProperty( "tab_dir_fullpath", aFileName );
-
-        QStringList names = aFileName.split( "/" );
-        QString fileName = names.value( names.length() - 1 );
-        mUi->mTabWidget->addTab( textEdit, fileName );
-        mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
-        textEdit->setLineWrapMode(QTextEdit::NoWrap);
-        textEdit->setReadOnly( true );
-        textEdit->setTextInteractionFlags( Qt::TextSelectableByMouse | Qt::TextSelectableByKeyboard );
-        */
     }
 } // end of function MainWindow::readFile()
 
@@ -442,24 +425,16 @@ void MainWindow::readJpg
 {
     QLabel *label = new QLabel();
     QPixmap *pix = new QPixmap( aFileName );
-    int w = label->width();
-    int h = label->height();
-    label->setPixmap( pix->scaled(500,500,Qt::KeepAspectRatio) );
+    label->setPixmap( pix );
     label->show();
     label->setProperty( "tab_dir_fullpath", aFileName );
     QScrollArea *area = new QScrollArea();
     area->setWidget( label );
     QStringList names = aFileName.split( "/" );
     QString fileName = names.value( names.length() - 1 );
-    mUi->mTabWidget->addTab( area, fileName );
 
+    mUi->mTabWidget->addTab( area, fileName );
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
-    /*QWidget *a = mUi->mTabWidget->widget(mUi->mTabWidget->count() - 1);
-    QScrollArea *b = (QScrollArea*) a;
-    QLabel *c = (QLabel*) b->takeWidget();
-    c->setPixmap( c->pixmap()->scaled(1000,1000,Qt::KeepAspectRatio));*/
-    //QLabel a = (QLabel)((QScrollArea) mUi->mTabWidget->widget(mUi->mTabWidget->count() - 1)).takeWidget();
-    //((QLabel)().takeWidget()).setPixmap(((QLabel)((QScrollArea) mUi->mTabWidget->widget(mUi->mTabWidget->count() - 1)).takeWidget()).pixmap()->scaled(1000,1000,Qt::KeepAspectRatio));
 } // end of function MainWindow::readJpg()
 
 //---------------------------------------------------------------------------------
@@ -506,6 +481,22 @@ void MainWindow::readBed
 } // end of function MainWindow::readBed()
 
 //---------------------------------------------------------------------------------
+//! Read html file
+//---------------------------------------------------------------------------------
+void MainWindow::readHtmlFile
+    (
+    QString aFileName
+    )
+{
+    QWebEngineView *webView = new QWebEngineView();
+    webView->load( QUrl( "file://" + aFileName ) );
+    QStringList names = aFileName.split( "/" );
+    QString fileName = names.value( names.length() - 1 );
+
+    mUi->mTabWidget->addTab( webView, fileName );
+    mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+} // end of function MainWindow::readHtml()
+
 //---------------------------------------------------------------------------------
 //! Save log file
 //---------------------------------------------------------------------------------
@@ -640,3 +631,31 @@ void MainWindow::handleRegressionClicked()
 } // end of function MainWindow::handleRegressionClicked()
 
 //---------------------------------------------------------------------------------
+//! Zoom in
+//---------------------------------------------------------------------------------
+void MainWindow::zoomIn()
+{
+    QWidget *widget = mUi->mTabWidget->widget( mUi->mTabWidget->currentIndex() );
+    QString name = mUi->mTabWidget->tabText( mUi->mTabWidget->currentIndex() );
+    QStringList nameSplit = name.split(".");
+    name = nameSplit[ nameSplit.length() - 1 ];
+    if( name == "html"){
+        QWebEngineView *view = ( QWebEngineView* ) widget;
+        view->setZoomFactor( view->zoomFactor() + 0.2 );
+    }
+} // end of function MainWindow::zoomIn()
+
+//---------------------------------------------------------------------------------
+//! Zoom in
+//---------------------------------------------------------------------------------
+void MainWindow::zoomOut()
+{
+    QWidget *widget = mUi->mTabWidget->widget( mUi->mTabWidget->currentIndex() );
+    QString name = mUi->mTabWidget->tabText( mUi->mTabWidget->currentIndex() );
+    QStringList nameSplit = name.split(".");
+    name = nameSplit[ nameSplit.length() - 1 ];
+    if( name == "html"){
+        QWebEngineView *view = ( QWebEngineView* ) widget;
+        view->setZoomFactor( view->zoomFactor() - 0.2 );
+    }
+} // end of function MainWindow::zoomOut()

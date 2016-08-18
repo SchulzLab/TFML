@@ -10,6 +10,7 @@ greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 TARGET = EpigeneticsAnalysisTool
 TEMPLATE = app
+QT += webenginewidgets
 QT += sql widgets
 QT += xml widgets
 

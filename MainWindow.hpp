@@ -47,6 +47,11 @@ private slots:
 
     void addBedFile();
 
+    void readHtmlFile
+        (
+        QString fileName
+        );
+
     void handlePeakCallingClicked();
 
     void handleTepicClicked();
@@ -93,6 +98,10 @@ private slots:
     void handleRegressionClicked();
 
     void refreshProject();
+
+    void zoomIn();
+
+    void zoomOut();
 
 //----------------------------------------------------------------
 // Functions

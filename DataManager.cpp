@@ -8,7 +8,7 @@
 *********************************************************************/
 
 #include "DataManager.hpp"
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 #include <iostream>
 #include <string>
 #include <QMainWindow>
