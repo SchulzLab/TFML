@@ -19,6 +19,7 @@
 #include "DataManager.hpp"
 #include "AnalysisManager.hpp"
 #include <QtWebEngineWidgets/QtWebEngineWidgets>
+#include "WebPage.hpp"
 
 using namespace std;
 
@@ -163,6 +164,8 @@ void MainWindow::createToolBar()
     QAction *stopAction = new QAction( "Stop", this );
     QAction *saveLogAction = new QAction( "Save log", this );
     QAction *refreshListAction = new QAction( "Refresh list", this );
+    QAction *backAction = new QAction( "Back", this );
+    QAction *forwardAction = new QAction( "Forward", this );
 
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     addDirectoryAction->setIcon( QIcon::fromTheme( "folder-open" ) );
@@ -174,6 +177,8 @@ void MainWindow::createToolBar()
     staAction->setIcon( QIcon::fromTheme( "document-properties" ) );
     stopAction->setIcon( QIcon::fromTheme( "process-stop" ) );
     saveLogAction->setIcon( QIcon::fromTheme( "document-save" ) );
+    backAction->setIcon( QIcon::fromTheme( "go-previous" ) );
+    forwardAction->setIcon( QIcon::fromTheme( "go-next" ) );
 
     toolBar->addAction( addAction );
     toolBar->addAction( addDirectoryAction );
@@ -184,6 +189,8 @@ void MainWindow::createToolBar()
     toolBar->addAction( zoomoutAction );
     toolBar->addAction( stopAction );
     toolBar->addAction( saveLogAction );
+    toolBar->addAction( backAction );
+    toolBar->addAction( forwardAction );
     if( DataManager::getDataManager()->getProjectName().isEmpty() ){
         addAction->setEnabled( false );
         addDirectoryAction->setEnabled( false );
@@ -198,6 +205,8 @@ void MainWindow::createToolBar()
     connect( refreshListAction, SIGNAL( triggered( bool ) ), this, SLOT( refreshProject() ) );
     connect( zoominAction, SIGNAL( triggered( bool ) ), this, SLOT( zoomIn() ) );
     connect( zoomoutAction, SIGNAL( triggered( bool ) ), this, SLOT( zoomOut() ) );
+    connect( backAction, SIGNAL( triggered( bool ) ), this, SLOT( goBack() ) );
+    connect( forwardAction, SIGNAL( triggered( bool ) ), this, SLOT( goForward() ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirectoryAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), staAction, SLOT( setEnabled( bool ) ) );
@@ -425,7 +434,7 @@ void MainWindow::readJpg
 {
     QLabel *label = new QLabel();
     QPixmap *pix = new QPixmap( aFileName );
-    label->setPixmap( pix );
+    label->setPixmap( *pix );
     label->show();
     label->setProperty( "tab_dir_fullpath", aFileName );
     QScrollArea *area = new QScrollArea();
@@ -434,6 +443,7 @@ void MainWindow::readJpg
     QString fileName = names.value( names.length() - 1 );
 
     mUi->mTabWidget->addTab( area, fileName );
+    area->setProperty( "tab_dir_fullpath", aFileName );
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
 } // end of function MainWindow::readJpg()
 
@@ -489,12 +499,16 @@ void MainWindow::readHtmlFile
     )
 {
     QWebEngineView *webView = new QWebEngineView();
-    webView->load( QUrl( "file://" + aFileName ) );
+    WebPage *webPage = new WebPage();
+    webPage->load( QUrl( "file://" + aFileName ) );
+    webView->setPage( webPage );
     QStringList names = aFileName.split( "/" );
     QString fileName = names.value( names.length() - 1 );
-
+    webView->setObjectName( cHtmlLabel );
+    webView->setProperty( "tab_dir_fullpath", aFileName );
     mUi->mTabWidget->addTab( webView, fileName );
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+    connect( webView->page(), SIGNAL(linkClicked( QUrl ) ), this, SLOT( linkClicked( QUrl ) ) );
 } // end of function MainWindow::readHtml()
 
 //---------------------------------------------------------------------------------
@@ -636,10 +650,8 @@ void MainWindow::handleRegressionClicked()
 void MainWindow::zoomIn()
 {
     QWidget *widget = mUi->mTabWidget->widget( mUi->mTabWidget->currentIndex() );
-    QString name = mUi->mTabWidget->tabText( mUi->mTabWidget->currentIndex() );
-    QStringList nameSplit = name.split(".");
-    name = nameSplit[ nameSplit.length() - 1 ];
-    if( name == "html"){
+    QString name = mUi->mTabWidget->currentWidget()->objectName();
+    if( name == cHtmlLabel ){
         QWebEngineView *view = ( QWebEngineView* ) widget;
         view->setZoomFactor( view->zoomFactor() + 0.2 );
     }
@@ -651,11 +663,52 @@ void MainWindow::zoomIn()
 void MainWindow::zoomOut()
 {
     QWidget *widget = mUi->mTabWidget->widget( mUi->mTabWidget->currentIndex() );
-    QString name = mUi->mTabWidget->tabText( mUi->mTabWidget->currentIndex() );
-    QStringList nameSplit = name.split(".");
-    name = nameSplit[ nameSplit.length() - 1 ];
-    if( name == "html"){
+    QString name = mUi->mTabWidget->currentWidget()->objectName();
+    if( name == cHtmlLabel ){
         QWebEngineView *view = ( QWebEngineView* ) widget;
         view->setZoomFactor( view->zoomFactor() - 0.2 );
     }
 } // end of function MainWindow::zoomOut()
+
+//---------------------------------------------------------------------------------
+//! Html go to previous page
+//---------------------------------------------------------------------------------
+void MainWindow::goBack()
+{
+    QWidget *widget = mUi->mTabWidget->widget( mUi->mTabWidget->currentIndex() );
+    QString name = mUi->mTabWidget->currentWidget()->objectName();
+    if( name == cHtmlLabel ){
+        QWebEngineView *view = ( QWebEngineView* ) widget;
+        view->page()->triggerAction( QWebEnginePage::Back );
+    }
+} // end of function MainWindow::goBack()
+
+//---------------------------------------------------------------------------------
+//! Html go to next page
+//---------------------------------------------------------------------------------
+void MainWindow::goForward()
+{
+    QWidget *widget = mUi->mTabWidget->widget( mUi->mTabWidget->currentIndex() );
+    QString name = mUi->mTabWidget->currentWidget()->objectName();
+    if( name == cHtmlLabel ){
+        QWebEngineView *view = ( QWebEngineView* ) widget;
+        view->page()->triggerAction( QWebEnginePage::Forward );
+    }
+} // end of function MainWindow::goForward()
+
+//---------------------------------------------------------------------------------
+//! Link clicked
+//---------------------------------------------------------------------------------
+void MainWindow::linkClicked
+    (
+    QUrl aUrl
+    )
+{
+    QWebEngineView *webView = new QWebEngineView();
+    webView->setUrl( aUrl );
+    webView->setObjectName( cHtmlLabel );
+    QStringList nameSplit = aUrl.toString().split( "=" );
+    QString name = nameSplit[ nameSplit.length() - 1 ];
+    mUi->mTabWidget->addTab( webView, name );
+    mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
+} // end of function MainWindow::linkClicked()

@@ -103,6 +103,15 @@ private slots:
 
     void zoomOut();
 
+    void goBack();
+
+    void goForward();
+
+    void linkClicked
+        (
+        QUrl aUrl
+        );
+
 //----------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------
@@ -134,7 +143,7 @@ private:
     FileListWidget *mResultList;
     QDockWidget *mDockLeft;
     QDockWidget *mDockRight;
-
+    const QString cHtmlLabel = "HTML";
 };
 
 #endif // MAINWINDOW_H
