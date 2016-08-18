@@ -90,6 +90,8 @@ private slots:
 
     void handleDiffLearnClicked();
 
+    void handleRegressionClicked();
+
     void refreshProject();
 
 //----------------------------------------------------------------

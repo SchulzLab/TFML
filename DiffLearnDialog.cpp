@@ -19,12 +19,21 @@ using namespace std;
 //---------------------------------------------------------------------------------
 DiffLearnDialog::DiffLearnDialog
     (
+    DIFF_TYPE aDiffType,
     QWidget *parent
     )
     : QDialog( parent )
+    , mDiffType( aDiffType )
 {
-    mInputWidgetBox = createInputWidgets();
-
+    QString title;
+    if( mDiffType == DIFF_TYPE::DIFF ){
+        mInputWidgetBox = createInputWidgets();
+        title = "Differentiate Learning";
+    }
+    else{
+        mInputWidgetBox = createRegressionInputWidgets();
+        title = "Regression";
+    }
     mButtonBox = createButtons();
 
     QVBoxLayout *layout = new QVBoxLayout;
@@ -33,7 +42,7 @@ DiffLearnDialog::DiffLearnDialog
     layout->setSizeConstraint( QLayout::SetFixedSize );
     setLayout( layout );
 
-    setWindowTitle( "Differentiate Learning" );
+    setWindowTitle( title );
 } // end of function DiffLearnDialog::DiffLearnDialog()
 
 //---------------------------------------------------------------------------------
@@ -41,7 +50,7 @@ DiffLearnDialog::DiffLearnDialog
 //---------------------------------------------------------------------------------
 QGroupBox *DiffLearnDialog::createInputWidgets()
 {
-    QGroupBox *box = new QGroupBox( "Peak Calling" );
+    QGroupBox *box = new QGroupBox();
 
     mNormalLabel = new QLabel( "Normal class directory:" );
     mDiseaseLabel = new QLabel( "Disease class directory:" );
@@ -69,12 +78,44 @@ QGroupBox *DiffLearnDialog::createInputWidgets()
     layout->addWidget( mOutputEditor, 2, 1 );
 
     connect( mNormalButton, SIGNAL( clicked() ), this, SLOT( selectDirectory() ) );
-    connect( mDiseaseButton, SIGNAL( clicked() ), this, SLOT( selectFile() ) );
+    connect( mDiseaseButton, SIGNAL( clicked() ), this, SLOT( selectDirectory() ) );
 
     box->setLayout( layout );
 
     return box;
 } // end of function DiffLearnDialog::createInputWidgets()
+
+//---------------------------------------------------------------------------------
+//! Create basic input widgets
+//---------------------------------------------------------------------------------
+QGroupBox *DiffLearnDialog::createRegressionInputWidgets()
+{
+    QGroupBox *box = new QGroupBox();
+
+    mNormalLabel = new QLabel( "Sample directory:" );
+    mOutputLabel = new QLabel( "Output Directory:" );
+
+    mNormalEditor = new QLineEdit;
+    mDiseaseEditor = new QLineEdit;
+    mOutputEditor = new QLineEdit;
+
+    mNormalButton = new QPushButton( "Select Directory" );
+    mNormalButton->setObjectName( "NormalButton" );
+
+    QGridLayout *layout = new QGridLayout;
+    layout->addWidget( mNormalLabel, 0, 0 );
+    layout->addWidget( mNormalEditor, 0, 1 );
+    layout->addWidget( mNormalButton, 0, 2 );
+
+    layout->addWidget( mOutputLabel, 1, 0 );
+    layout->addWidget( mOutputEditor, 1, 1 );
+
+    connect( mNormalButton, SIGNAL( clicked() ), this, SLOT( selectDirectory() ) );
+
+    box->setLayout( layout );
+
+    return box;
+} // end of function DiffLearnDialog::createRegressionInputWidgets()
 
 //---------------------------------------------------------------------------------
 //! Create buttons
@@ -140,12 +181,24 @@ void DiffLearnDialog::selectFile()
 //---------------------------------------------------------------------------------
 void DiffLearnDialog::handleClickOk()
 {
-    if( mNormalEditor->text().isEmpty() || mDiseaseEditor->text().isEmpty() || mOutputEditor->text().isEmpty()) {
-        cout << "empty" << endl;
+    if( mDiffType == DIFF_TYPE::DIFF ){
+        if( mNormalEditor->text().isEmpty() || mDiseaseEditor->text().isEmpty() || mOutputEditor->text().isEmpty()) {
+            cout << "empty" << endl;
+        }
+        else {
+            QString cmd = mNormalEditor->text() + " " + mDiseaseEditor->text() + " " + mOutputEditor->text();
+            accept();
+            AnalysisManager::getAnalysisManager()->diffLearning( cmd, mOutputEditor->text() );
+        }
     }
-    else {
-        QString cmd = mNormalEditor->text() + " " + mDiseaseEditor->text() + " " + mOutputEditor->text();
-        accept();
-        AnalysisManager::getAnalysisManager()->diffLearning( cmd, mOutputEditor->text() );
+    else{
+        if( mNormalEditor->text().isEmpty() || mOutputEditor->text().isEmpty()) {
+            cout << "empty" << endl;
+        }
+        else {
+            QString cmd = mNormalEditor->text() + " " + mOutputEditor->text();
+            accept();
+            AnalysisManager::getAnalysisManager()->regression( cmd, mOutputEditor->text() );
+        }
     }
 } // end of function DiffLearnDialog::ok()

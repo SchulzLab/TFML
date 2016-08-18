@@ -8,7 +8,7 @@
 *********************************************************************/
 
 #include "MainWindow.hpp"
-#include "ui_mainwindow.h"
+#include "ui_MainWindow.h"
 #include "PeakCallingDialog.hpp"
 #include "ProjectDialog.hpp"
 #include "TepicDialog.hpp"
@@ -86,10 +86,12 @@ void MainWindow::createMenuBar()
     // Analyze Menu
     QAction *integrateAction = new QAction( "Integrate data", this );
     QAction *diffAction = new QAction( "Differentiate learning", this );
+    QAction *regressionAction = new QAction( "Regression", this );
 
     QMenu *analyzeMenu = mUi->mMenuBar->addMenu( "Analyze" );
     analyzeMenu->addAction( integrateAction );
     analyzeMenu->addAction( diffAction );
+    analyzeMenu->addAction( regressionAction );
 
     // Windows Menu
     QMenu *windowMenu = mUi->mMenuBar->addMenu( tr( "&Window" ) );
@@ -125,6 +127,7 @@ void MainWindow::createMenuBar()
     connect( tepicAction, SIGNAL( triggered( bool ) ), this, SLOT( handleTepicClicked() ) );
     connect( integrateAction, SIGNAL( triggered( bool ) ), this, SLOT( handleIntegrateClicked() ) );
     connect( diffAction, SIGNAL( triggered( bool ) ), this, SLOT( handleDiffLearnClicked() ) );
+    connect( regressionAction, SIGNAL( triggered( bool ) ), this, SLOT( handleRegressionClicked() ) );
     connect( fileListAction, SIGNAL( triggered( bool ) ), mUi->mDockLeft, SLOT( setVisible( bool ) ) );
     connect( mUi->mDockLeft, SIGNAL( visibilityChanged(bool)), fileListAction, SLOT( setChecked( bool ) ) );
     connect( resultListAction, SIGNAL( triggered( bool ) ), mUi->mDockResult, SLOT( setVisible( bool ) ) );
@@ -503,6 +506,7 @@ void MainWindow::readBed
 } // end of function MainWindow::readBed()
 
 //---------------------------------------------------------------------------------
+//---------------------------------------------------------------------------------
 //! Save log file
 //---------------------------------------------------------------------------------
 void MainWindow::saveLog()
@@ -622,6 +626,17 @@ void MainWindow::handleIntegrateClicked()
 //---------------------------------------------------------------------------------
 void MainWindow::handleDiffLearnClicked()
 {
-    DiffLearnDialog *dialog = new DiffLearnDialog();
+    DiffLearnDialog *dialog = new DiffLearnDialog( DiffLearnDialog::DIFF_TYPE::DIFF );
     dialog->exec();
 } // end of function MainWindow::handleDiffLearnClicked()
+
+//---------------------------------------------------------------------------------
+//! Show dialog for regression
+//---------------------------------------------------------------------------------
+void MainWindow::handleRegressionClicked()
+{
+    DiffLearnDialog *dialog = new DiffLearnDialog( DiffLearnDialog::DIFF_TYPE::REGRESSION );
+    dialog->exec();
+} // end of function MainWindow::handleRegressionClicked()
+
+//---------------------------------------------------------------------------------

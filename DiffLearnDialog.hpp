@@ -25,12 +25,20 @@ public:
         DIR = 1
     };
 
+    enum DIFF_TYPE
+    {
+        DIFF = 0,
+        REGRESSION = 1
+    };
+
 //----------------------------------------------------------------
 // Functions
 //----------------------------------------------------------------
 public:
+
     DiffLearnDialog
         (
+        DIFF_TYPE aDiffType,
         QWidget *parent = 0
         );
 
@@ -41,6 +49,8 @@ private:
     QDialogButtonBox *createButtons();
 
     QGroupBox *createInputWidgets();
+
+    QGroupBox *createRegressionInputWidgets();
 
 //----------------------------------------------------------------
 // Slots
@@ -56,6 +66,7 @@ private slots:
 // Variables
 //----------------------------------------------------------------
 private:
+    DIFF_TYPE mDiffType;
     QGroupBox *mInputWidgetBox;
     QDialogButtonBox *mButtonBox;
 
