@@ -16,7 +16,6 @@ QT += xml widgets
 
 SOURCES += Main.cpp\
         MainWindow.cpp \
-    Dialog.cpp \
     DataManager.cpp \
     FileListWidget.cpp \
     BedFileData.cpp \
@@ -30,7 +29,6 @@ SOURCES += Main.cpp\
     WebPage.cpp
 
 HEADERS  += MainWindow.hpp \
-    Dialog.hpp \
     DataManager.hpp \
     FileListWidget.hpp \
     BedFileData.hpp \

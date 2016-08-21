@@ -41,10 +41,6 @@ public:
 private slots:
     void addFile();
 
-    void delFile();
-
-    void delResultFile();
-
     void addBedFile();
 
     void readHtmlFile

@@ -21,9 +21,21 @@ class FileListWidget : public QWidget
     Q_OBJECT
 
 public:
+
+enum LIST_TYPE
+{
+    FILE_LIST = 0,
+    RESULT_LIST = 1
+};
+
+//----------------------------------------------------------------
+// Functions
+//----------------------------------------------------------------
+public:
     FileListWidget
         (
-        QWidget *widget
+        QWidget *widget,
+        LIST_TYPE aType
         );
 
     QTreeWidgetItem *getCurrentItem();
@@ -61,6 +73,8 @@ public slots:
         QTreeWidgetItem *aItem,
         int aNumber
         );
+
+    void showContextMenu(const QPoint &pos);
 signals:
     void itemClicked
         (
@@ -79,6 +93,7 @@ signals:
         );
 
 private:
+    LIST_TYPE mType;
     QTreeWidget *mTree;
     QTreeWidgetItem *mRoot;
     QFileInfoList allfile( QTreeWidgetItem *aRoot, QString aPath );

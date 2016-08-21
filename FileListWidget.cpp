@@ -19,9 +19,11 @@
 //---------------------------------------------------------------------------------
 FileListWidget::FileListWidget
     (
-    QWidget *widget
+    QWidget *widget,
+    LIST_TYPE aType
     )
 {
+    mType = aType;
     QVBoxLayout *layout = new QVBoxLayout();
     mTree = new QTreeWidget( this );
     mTree->setColumnCount( COLUMN_COUNT );
@@ -31,6 +33,8 @@ FileListWidget::FileListWidget
     layout->addWidget( mTree );
     setLayout( layout );
     mTree->setFocusPolicy( Qt::TabFocus );
+    setContextMenuPolicy(Qt::CustomContextMenu);
+    connect( this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
     connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( doubleClickedEvent( QTreeWidgetItem*, int ) ) );
     connect( mTree, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
 } // end of function FileListWidget::FileListWidget()
@@ -97,7 +101,7 @@ void FileListWidget::addDirectory
         {
             QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
-            QTreeWidgetItem *root = new QTreeWidgetItem( QStringList() << name << aPath );
+            QTreeWidgetItem *root = new QTreeWidgetItem( QStringList() << name << aPath << "first-level" );
             root->setToolTip( 0, aPath );
             mRoot->addChild( root );
             allfile( root, aPath );
@@ -106,7 +110,7 @@ void FileListWidget::addDirectory
         {
             QStringList path = aPath.split( "/" );
             QString name = path[ path.length() - 1 ];
-            QTreeWidgetItem *root = new QTreeWidgetItem( QStringList() << name << aPath );
+            QTreeWidgetItem *root = new QTreeWidgetItem( QStringList() << name << aPath << "first-level");
             root->setToolTip( 1, aPath );
             mRoot->addChild( root );
         }
@@ -133,19 +137,15 @@ void FileListWidget::addSubDirectory
 //---------------------------------------------------------------------------------
 void FileListWidget::delFile()
 {
-    qInfo() << mTree->selectedItems().length();
     QTreeWidgetItem *item = mTree->selectedItems().at( 0 );
-    mTree->removeItemWidget(item, 1);
-    //mRoot->removeChild( item );
+    mRoot->removeChild( item );
+    if( mType == FILE_LIST ){
+        DataManager::getDataManager()->delPath( item->text( 1 ) );
+    }
+    else{
+        DataManager::getDataManager()->delResultPath( item->text( 1 ) );
+    }
 } // end of function FileListWidget::delFile()
-
-void FileListWidget::DeleteItem(QTreeWidgetItem *item) {
-  if (!item) return;
-  for(int i=item->childCount()-1; i>=0; i--) {
-    DeleteItem(item->child(i));
-  }
-  delete item;
-}
 
 //---------------------------------------------------------------------------------
 //! Delete all file or directory
@@ -216,3 +216,24 @@ void FileListWidget::addProjectDirectory
     mRoot->setCheckState( 1, Qt::Checked );
     mRoot->setExpanded( true );
 } // end of function FileListWidget::addDirectory()
+
+//---------------------------------------------------------------------------------
+//! Show item menu
+//---------------------------------------------------------------------------------
+void FileListWidget::showContextMenu
+    (
+    const QPoint &pos
+    )
+{
+    if( mTree->currentItem()->text( 2 ) == "first-level" ){
+        // Handle global position
+        QPoint globalPos = mapToGlobal( pos );
+
+        // Create menu and insert some actions
+        QMenu menu;
+        menu.addAction( "Remove folder", this, SLOT( delFile() ) );
+
+        // Show context menu at handling position
+        menu.exec( globalPos );
+    }
+} // end of function FileListWidget::showContextMenu()

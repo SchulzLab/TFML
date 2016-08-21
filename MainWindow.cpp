@@ -156,7 +156,6 @@ void MainWindow::createToolBar()
 
     QAction *addAction = new QAction( "Add file", this );
     QAction *addDirectoryAction = new QAction( "Add directory", this );
-    QAction *delAction = new QAction( "Delete", this );
     QAction *staAction = new QAction( "Analyze", this );
     QAction *refreshAction = new QAction( "Refresh", this );
     QAction *zoominAction = new QAction( "Zoom in", this );
@@ -169,7 +168,6 @@ void MainWindow::createToolBar()
 
     addAction->setIcon( QIcon::fromTheme( "document-open" ) );
     addDirectoryAction->setIcon( QIcon::fromTheme( "folder-open" ) );
-    delAction->setIcon( QIcon::fromTheme( "edit-delete" ) );
     zoominAction->setIcon( QIcon::fromTheme( "zoom-in" ) );
     zoomoutAction->setIcon( QIcon::fromTheme( "zoom-out" ) );
     refreshAction->setIcon( QIcon::fromTheme( "view-refresh" ) );
@@ -182,7 +180,6 @@ void MainWindow::createToolBar()
 
     toolBar->addAction( addAction );
     toolBar->addAction( addDirectoryAction );
-    toolBar->addAction( delAction );
     toolBar->addAction( refreshListAction );
     toolBar->addAction( staAction );
     toolBar->addAction( zoominAction );
@@ -197,8 +194,6 @@ void MainWindow::createToolBar()
     }
     connect( addAction, SIGNAL( triggered( bool ) ), this, SLOT( addFile() ) );
     connect( addDirectoryAction, SIGNAL( triggered( bool ) ), this, SLOT( addDirectory() ) );
-    connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delFile() ) );
-    connect( delAction, SIGNAL( triggered( bool ) ), this, SLOT( delResultFile() ) );
     connect( staAction, SIGNAL( triggered( bool ) ), this, SLOT( analyzeFile() ) );
     connect( stopAction, SIGNAL( triggered( bool ) ), AnalysisManager::getAnalysisManager(), SLOT( killProcess() ) );
     connect( saveLogAction, SIGNAL( triggered( bool ) ), this, SLOT( saveLog() ) );
@@ -244,32 +239,6 @@ void MainWindow::addFile()
     }
 
 } // end of function MainWindow::addFile()
-
-//---------------------------------------------------------------------------------
-//! Delete file in the file list
-//---------------------------------------------------------------------------------
-void MainWindow::delFile()
-{
-    QTreeWidgetItem *item = mList->getCurrentItem();
-    if( item != NULL ){
-        mList->delFile();
-        DataManager::getDataManager()->delPath( item->text( 1 ) );
-    }
-    mResultList->clearFocus();
-} // end of function MainWindow::delFile()
-
-//---------------------------------------------------------------------------------
-//! Delete file in the file list
-//---------------------------------------------------------------------------------
-void MainWindow::delResultFile()
-{
-    QTreeWidgetItem *item = mResultList->getCurrentItem();
-    if( item != NULL ){
-        mResultList->delFile();
-        DataManager::getDataManager()->delResultPath( item->text( 1 ) );
-    }
-
-} // end of function MainWindow::delFile()
 
 //---------------------------------------------------------------------------------
 //! Create dialog to add bed file
