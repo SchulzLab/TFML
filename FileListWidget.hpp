@@ -34,7 +34,11 @@ enum LIST_TYPE
 public:
     FileListWidget
         (
-        QWidget *widget,
+        QWidget *widget
+        );
+
+    void initListType
+        (
         LIST_TYPE aType
         );
 

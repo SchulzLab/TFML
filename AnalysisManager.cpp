@@ -58,7 +58,8 @@ void AnalysisManager::peakCalling
 {
     mProcessType = PROCESS_TYPE::PEAK_CALLING;
     mOutputPath = QDir::currentPath() + "/" + aOutputPath;
-    QString peakCallingCmd = "bash /home/thsieh/JAMM-1.0.7.3/JAMM.sh " + aCmd;
+    QString file = QDir::homePath() + '/JAMM-1.0.7.3/JAMM.sh';
+    QString peakCallingCmd = "bash " + file + " " + aCmd;
     cout << peakCallingCmd.toStdString() << endl;
     mProcess->start( peakCallingCmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
@@ -76,8 +77,9 @@ void AnalysisManager::tepic
     )
 {
     mProcessType = PROCESS_TYPE::TEPIC;
-    mOutputPath = "/home/thsieh/TEPIC-1.0.0/Code/" + aOutputPath;
-    QDir::setCurrent( QStringLiteral("/home/thsieh/TEPIC-1.0.0/Code") );
+    mOutputPath = QDir::homePath() + "/TEPIC-1.0.0/Code/" + aOutputPath;
+    QString path = QDir::homePath() + "/TEPIC-1.0.0/Code";
+    QDir::setCurrent( path );
     QString tepicCmd = "bash TEPIC.sh " + aCmd;
     mProcess->start( tepicCmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
@@ -125,10 +127,12 @@ void AnalysisManager::analyseBedFile
     QString cmd = "";
     QStringList fileSuffix = aFilePath.split( "." );
     if( fileSuffix.at( fileSuffix.size() - 1 ) == "bed" ){
-        cmd = "Rscript /home/thsieh/Epigenetic_tool/bed_detail.R " + aFilePath;
+        QString file = QDir::homePath() + "/EpigeneticsTools/bed_detail.R";
+        cmd = "Rscript " + file + " " + aFilePath;
     }
     else{
-        cmd = "Rscript /home/thsieh/Epigenetic_tool/peak.R " + aFilePath;
+        QString file = QDir::homePath() + "/EpigeneticsTools/peak.R";
+        cmd = "Rscript " + file + " " + aFilePath;
     }
     QStringList path = aFilePath.split( "/" );
     QString name = "analysis_" + path[ path.length() - 1 ];
@@ -160,8 +164,9 @@ void AnalysisManager::integrateData
     )
 {
     mProcessType = PROCESS_TYPE::INTEGRATE_DATA;
-    mOutputPath = "/home/thsieh/Epigenetic_tool/" + aOutputPath;
-    QDir::setCurrent( QStringLiteral("/home/thsieh/Epigenetic_tool") );
+    mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
+    QString path = QDir::homePath() + "/EpigeneticsTools";
+    QDir::setCurrent( path );
     QString integrateCmd = "bash ./generateM.sh '\"''\"'' '\"''\"' " + aCmd + " " + aOutputPath;
     qInfo() << integrateCmd;
     mProcess->start( integrateCmd );
@@ -180,16 +185,16 @@ void AnalysisManager::diffLearning
     )
 {
     mProcessType = PROCESS_TYPE::DIFF_LEARNING;
-    mOutputPath = "/home/thsieh/Epigenetic_tool/" + aOutputPath;
-    QDir::setCurrent( QStringLiteral("/home/thsieh/Epigenetic_tool") );
-    QString cmd = "Rscript preprocessLearning.R " + aCmd;
+    mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
+    QString path = QDir::homePath() + "/EpigeneticsTools";
+    QDir::setCurrent( path );
+    QString cmd = "Rscript diffLearning.R " + aCmd;
     qInfo() << cmd;
     mProcess->start( cmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
 } // end of function AnalysisManager::diffLearning()
-
 
 //---------------------------------------------------------------------------------
 //! Execute regression
@@ -201,12 +206,13 @@ void AnalysisManager::regression
     )
 {
     mProcessType = PROCESS_TYPE::REGRESSION;
-    mOutputPath = "/home/thsieh/Epigenetic_tool/" + aOutputPath;
-    QDir::setCurrent( QStringLiteral("/home/thsieh/Epigenetic_tool") );
-    QString cmd = "Rscript preprocessRegression.R " + aCmd;
+    mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
+    QString path = QDir::homePath() + "/EpigeneticsTools";
+    QDir::setCurrent( path );
+    QString cmd = "Rscript regression.R " + aCmd;
     qInfo() << cmd;
     mProcess->start( cmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
-} // end of function AnalysisManager::diffLearning()
+} // end of function AnalysisManager::regression()

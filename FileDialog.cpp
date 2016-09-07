@@ -59,8 +59,8 @@ void FileDialog::init()
     mFileName = "";
     mFileEdit = new QLineEdit();
     mFileEdit->setReadOnly( true );
-    mFileList = new FileListWidget( this, FileListWidget::LIST_TYPE::FILE_LIST );
-
+    mFileList = new FileListWidget( this );
+    mFileList->initListType( FileListWidget::LIST_TYPE::FILE_LIST );
     QStringList list = DataManager::getDataManager()->getFileNameList();
     mInputWidget = createInputWidgets();
     mFileList->addProjectDirectory( DataManager::getDataManager()->getProjectName() );

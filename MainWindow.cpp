@@ -181,13 +181,16 @@ void MainWindow::createToolBar()
     toolBar->addAction( addAction );
     toolBar->addAction( addDirectoryAction );
     toolBar->addAction( refreshListAction );
-    toolBar->addAction( staAction );
-    toolBar->addAction( zoominAction );
-    toolBar->addAction( zoomoutAction );
+    toolBar->addSeparator();
+    //toolBar->addAction( staAction );
     toolBar->addAction( stopAction );
     toolBar->addAction( saveLogAction );
+    toolBar->addSeparator();
+    toolBar->addAction( zoominAction );
+    toolBar->addAction( zoomoutAction );
     toolBar->addAction( backAction );
     toolBar->addAction( forwardAction );
+
     if( DataManager::getDataManager()->getProjectName().isEmpty() ){
         addAction->setEnabled( false );
         addDirectoryAction->setEnabled( false );
@@ -213,17 +216,15 @@ void MainWindow::createToolBar()
 void MainWindow::createFileListDock()
 {
     mList = mUi->mFileList;
+    mList->initListType( FileListWidget::LIST_TYPE::FILE_LIST );
     mList->setContentsMargins( 9, 0, 0, 0 );
     mResultList = mUi->mResultFileList;
+    mResultList->initListType( FileListWidget::LIST_TYPE::RESULT_LIST );
     mResultList->setContentsMargins( 9, 0, 0, 0 );
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessOutputDone( QString ) ), this, SLOT( handleFinished( QString ) ) );
     connect( mList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     connect( mResultList, SIGNAL( getFileFullPathName( QString ) ), this, SLOT( readFile( QString ) ) );
     mUi->mDockLeft->setWidget( mList );
-    QString home = QDir().homePath();
-    QString resultDir = home + "/Epigenetics_project/Result";
-
-    //mResultList->addSubDirectory( resultDir );
 } // end of function MainWindow::createFileListDock()
 
 //---------------------------------------------------------------------------------

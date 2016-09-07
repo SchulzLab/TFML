@@ -52,7 +52,7 @@ QGroupBox *DiffLearnDialog::createInputWidgets()
 {
     QGroupBox *box = new QGroupBox();
 
-    mNormalLabel = new QLabel( "Normal class directory:" );
+    mNormalLabel = new QLabel( "Control class directory:" );
     mDiseaseLabel = new QLabel( "Disease class directory:" );
     mOutputLabel = new QLabel( "Output Directory:" );
 

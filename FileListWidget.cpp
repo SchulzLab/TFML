@@ -19,11 +19,9 @@
 //---------------------------------------------------------------------------------
 FileListWidget::FileListWidget
     (
-    QWidget *widget,
-    LIST_TYPE aType
+    QWidget *widget
     )
 {
-    mType = aType;
     QVBoxLayout *layout = new QVBoxLayout();
     mTree = new QTreeWidget( this );
     mTree->setColumnCount( COLUMN_COUNT );
@@ -38,6 +36,17 @@ FileListWidget::FileListWidget
     connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( doubleClickedEvent( QTreeWidgetItem*, int ) ) );
     connect( mTree, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
 } // end of function FileListWidget::FileListWidget()
+
+//---------------------------------------------------------------------------------
+//! Initial list type
+//---------------------------------------------------------------------------------
+void FileListWidget::initListType
+    (
+    LIST_TYPE aType
+    )
+{
+    mType = aType;
+} // end of function FileListWidget::initListType()
 
 //---------------------------------------------------------------------------------
 //! Add all files and sub-directories
