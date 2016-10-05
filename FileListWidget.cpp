@@ -31,8 +31,8 @@ FileListWidget::FileListWidget
     layout->addWidget( mTree );
     setLayout( layout );
     mTree->setFocusPolicy( Qt::TabFocus );
-    setContextMenuPolicy(Qt::CustomContextMenu);
-    connect( this, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(showContextMenu(QPoint)));
+    setContextMenuPolicy( Qt::CustomContextMenu );
+    connect( this, SIGNAL( customContextMenuRequested( QPoint ) ), this, SLOT( showContextMenu( QPoint ) ) );
     connect( mTree, SIGNAL( itemDoubleClicked( QTreeWidgetItem*, int ) ), this, SLOT( doubleClickedEvent( QTreeWidgetItem*, int ) ) );
     connect( mTree, SIGNAL( itemClicked( QTreeWidgetItem*, int ) ), this, SLOT( clickedEvent( QTreeWidgetItem*, int ) ) );
 } // end of function FileListWidget::FileListWidget()
@@ -157,6 +157,23 @@ void FileListWidget::delFile()
 } // end of function FileListWidget::delFile()
 
 //---------------------------------------------------------------------------------
+//! Delete file or directory
+//---------------------------------------------------------------------------------
+void FileListWidget::delFilePermanent()
+{
+    QTreeWidgetItem *item = mTree->selectedItems().at( 0 );
+    mRoot->removeChild( item );
+    if( mType == FILE_LIST ){
+        DataManager::getDataManager()->delPath( item->text( 1 ) );
+    }
+    else{
+        DataManager::getDataManager()->delResultPath( item->text( 1 ) );
+        QDir dir( item->text( 1 ) );
+        dir.removeRecursively();
+    }
+} // end of function FileListWidget::delFilePermanent()
+
+//---------------------------------------------------------------------------------
 //! Delete all file or directory
 //---------------------------------------------------------------------------------
 void FileListWidget::delAll()
@@ -241,7 +258,9 @@ void FileListWidget::showContextMenu
         // Create menu and insert some actions
         QMenu menu;
         menu.addAction( "Remove folder", this, SLOT( delFile() ) );
-
+        if( mType == RESULT_LIST ){
+            menu.addAction( "Remove folder permanently", this, SLOT( delFilePermanent() ) );
+        }
         // Show context menu at handling position
         menu.exec( globalPos );
     }

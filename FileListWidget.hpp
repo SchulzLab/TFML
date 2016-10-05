@@ -61,6 +61,8 @@ public:
 public slots:
     void delFile();
 
+    void delFilePermanent();
+
     void addDirectory
         (
         QString path
