@@ -83,6 +83,11 @@ private slots:
         QString aPath
         );
 
+    void handleWarning
+        (
+        QString aMsg
+        );
+
     void addProject();
 
     void newProject();

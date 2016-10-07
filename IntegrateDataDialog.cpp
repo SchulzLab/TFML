@@ -9,6 +9,7 @@
 
 #include "DataManager.hpp"
 #include "AnalysisManager.hpp"
+#include "DataManager.hpp"
 #include <iostream>
 #include "IntegrateDataDialog.hpp"
 #include "FileDialog.hpp"
@@ -126,6 +127,13 @@ void IntegrateDataDialog::selectFile()
 //---------------------------------------------------------------------------------
 void IntegrateDataDialog::handleClickOk()
 {
+    if( !mOutputEditor->text().isEmpty() && DataManager::getDataManager()->checkOutputDir( mOutputEditor->text() ) ){
+        QMessageBox msgBox;
+        msgBox.setWindowTitle( "Warning" );
+        msgBox.setText( "Output directory is already existed. Please change to another output name." );
+        msgBox.exec();
+        return;
+    }
     if( mTfEditor->text().isEmpty() || mExprEditor->text().isEmpty() || mOutputEditor->text().isEmpty() ){
         cout << "empty" << endl;
     }

@@ -63,7 +63,7 @@ void DataManager::checkProjectHomeDir()
 } // end of function DataManager::checkProjectHomeDir()
 
 //---------------------------------------------------------------------------------
-//! Check Log dir and create if log dir not exist
+//! Check dir and create if log dir not exist
 //---------------------------------------------------------------------------------
 bool DataManager::checkDir
     (
@@ -82,7 +82,25 @@ bool DataManager::checkDir
     }
     return result;
 
-} // end of function DataManager::checkLogDir()
+} // end of function DataManager::checkDir()
+
+//---------------------------------------------------------------------------------
+//! Check output dir
+//---------------------------------------------------------------------------------
+bool DataManager::checkOutputDir
+    (
+    QString aDir
+    )
+{
+    bool result = false;
+    QString dirPath = getProjectPath() + "/Result/" + aDir;
+    if( QDir( dirPath ).exists() )
+    {
+        result = true;
+    }
+    return result;
+
+} // end of function DataManager::checkOutputDir()
 
 //---------------------------------------------------------------------------------
 //! Save log file

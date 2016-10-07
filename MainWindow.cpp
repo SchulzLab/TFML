@@ -38,6 +38,7 @@ MainWindow::MainWindow
     createMenuBar();
     createFileListDock();
     createToolBar();
+    connect( AnalysisManager::getAnalysisManager(), SIGNAL( mProcessRunning( QString ) ), this, SLOT( handleWarning( QString ) ) );
     connect( AnalysisManager::getAnalysisManager(), SIGNAL( mUpdateLog( QString ) ), this, SLOT( updateLogText( QString ) ) );
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
     connect( DataManager::getDataManager(), SIGNAL( processFinished( QString ) ), this, SLOT( handleLogFinished( QString ) ) );
@@ -517,6 +518,20 @@ void MainWindow::handleFinished
         mResultList->addDirectory( aPath );
     }
 } // end of function MainWindow::handleFinished()
+
+//---------------------------------------------------------------------------------
+//! Show warning msg
+//---------------------------------------------------------------------------------
+void MainWindow::handleWarning
+    (
+    QString aMsg
+    )
+{
+    QMessageBox msgBox;
+    msgBox.setWindowTitle( "Warning" );
+    msgBox.setText( aMsg );
+    msgBox.exec();
+} // end of function MainWindow::handleWarning()
 
 //---------------------------------------------------------------------------------
 //! Create dialog to create project

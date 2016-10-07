@@ -99,6 +99,11 @@ public:
         QString aPath
         );
 
+    bool checkOutputDir
+        (
+        QString aDir
+        );
+
 private:
     DataManager();
 
@@ -106,12 +111,12 @@ private:
 
     void checkProjectHomeDir();
 
+    void updateDataList();
+
     bool checkDir
         (
         QString aDir
         );
-
-    void updateDataList();
 
     bool copyRecursively
         (

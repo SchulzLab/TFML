@@ -9,6 +9,7 @@
 
 #include "DataManager.hpp"
 #include "AnalysisManager.hpp"
+#include "DataManager.hpp"
 #include <iostream>
 #include "TepicDialog.hpp"
 #include "FileDialog.hpp"
@@ -205,6 +206,13 @@ void TepicDialog::selectFile()
 //---------------------------------------------------------------------------------
 void TepicDialog::handleClickOk()
 {
+    if( !mOutputEditor->text().isEmpty() && DataManager::getDataManager()->checkOutputDir( mOutputEditor->text() ) ){
+        QMessageBox msgBox;
+        msgBox.setWindowTitle( "Warning" );
+        msgBox.setText( "Output directory is already existed. Please change to another output name." );
+        msgBox.exec();
+        return;
+    }
     if( mAnnotedRegEditor->text().isEmpty() || mGenomeEditor->text().isEmpty() || mOutputEditor->text().isEmpty() || mPwmEditor->text().isEmpty() ){
         cout << "empty" << endl;
     }

@@ -9,6 +9,7 @@
 
 #include "DiffLearnDialog.hpp"
 #include "AnalysisManager.hpp"
+#include "DataManager.hpp"
 #include <iostream>
 #include "FileDialog.hpp"
 
@@ -181,6 +182,13 @@ void DiffLearnDialog::selectFile()
 //---------------------------------------------------------------------------------
 void DiffLearnDialog::handleClickOk()
 {
+    if( !mOutputEditor->text().isEmpty() && DataManager::getDataManager()->checkOutputDir( mOutputEditor->text() ) ){
+        QMessageBox msgBox;
+        msgBox.setWindowTitle( "Warning" );
+        msgBox.setText( "Output directory is already existed. Please change to another output name." );
+        msgBox.exec();
+        return;
+    }
     if( mDiffType == DIFF_TYPE::DIFF ){
         if( mNormalEditor->text().isEmpty() || mDiseaseEditor->text().isEmpty() || mOutputEditor->text().isEmpty()) {
             cout << "empty" << endl;

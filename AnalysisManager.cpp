@@ -56,6 +56,10 @@ void AnalysisManager::peakCalling
     QString aOutputPath
     )
 {
+    if( isProcessRunning() ){
+        mProcessRunning( cProcessRunning );
+        return;
+    }
     mProcessType = PROCESS_TYPE::PEAK_CALLING;
     mOutputPath = QDir::currentPath() + "/" + aOutputPath;
     QString file = QDir::homePath() + '/JAMM-1.0.7.3/JAMM.sh';
@@ -76,6 +80,10 @@ void AnalysisManager::tepic
     QString aOutputPath
     )
 {
+    if( isProcessRunning() ){
+        mProcessRunning( cProcessRunning );
+        return;
+    }
     mProcessType = PROCESS_TYPE::TEPIC;
     mOutputPath = QDir::homePath() + "/TEPIC-1.0.0/Code/" + aOutputPath;
     QString path = QDir::homePath() + "/TEPIC-1.0.0/Code";
@@ -124,6 +132,10 @@ void AnalysisManager::analyseBedFile
     QString aFilePath
     )
 {
+    if( isProcessRunning() ){
+        mProcessRunning( cProcessRunning );
+        return;
+    }
     QString cmd = "";
     QStringList fileSuffix = aFilePath.split( "." );
     if( fileSuffix.at( fileSuffix.size() - 1 ) == "bed" ){
@@ -163,6 +175,10 @@ void AnalysisManager::integrateData
     QString aOutputPath
     )
 {
+    if( isProcessRunning() ){
+        mProcessRunning( cProcessRunning );
+        return;
+    }
     mProcessType = PROCESS_TYPE::INTEGRATE_DATA;
     mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
     QString path = QDir::homePath() + "/EpigeneticsTools";
@@ -184,6 +200,10 @@ void AnalysisManager::diffLearning
     QString aOutputPath
     )
 {
+    if( isProcessRunning() ){
+        mProcessRunning( cProcessRunning );
+        return;
+    }
     mProcessType = PROCESS_TYPE::DIFF_LEARNING;
     mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
     QString path = QDir::homePath() + "/EpigeneticsTools";
@@ -205,6 +225,10 @@ void AnalysisManager::regression
     QString aOutputPath
     )
 {
+    if( isProcessRunning() ){
+        mProcessRunning( cProcessRunning );
+        return;
+    }
     mProcessType = PROCESS_TYPE::REGRESSION;
     mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
     QString path = QDir::homePath() + "/EpigeneticsTools";
@@ -216,3 +240,15 @@ void AnalysisManager::regression
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
 } // end of function AnalysisManager::regression()
+
+//---------------------------------------------------------------------------------
+//! Check if process is running
+//---------------------------------------------------------------------------------
+bool AnalysisManager::isProcessRunning()
+{
+    bool result = false;
+    if( mProcess->state() == QProcess::Running ){
+        result = true;
+    }
+    return result;
+} // end of function AnalysisManager::isProcessRunning()

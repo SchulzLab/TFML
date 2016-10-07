@@ -71,6 +71,8 @@ public:
         QString aOutputPath
         );
 
+    bool isProcessRunning();
+
 private:
     AnalysisManager();
 
@@ -102,6 +104,11 @@ signals:
         QString aLog
         );
 
+    void mProcessRunning
+        (
+        QString aMsg
+        );
+
 //----------------------------------------------------------------
 // Variables
 //----------------------------------------------------------------
@@ -112,7 +119,7 @@ private:
     QString mOutputPath;
     static AnalysisManager* sAnalysisManager;
     int mProcessType;
-
+    const QString cProcessRunning = "Another analysis process is running. Please wait for it to finish.";
 };
 
 #endif // ANALYSISMANAGER_H
