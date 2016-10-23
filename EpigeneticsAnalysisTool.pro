@@ -26,7 +26,9 @@ SOURCES += Main.cpp\
     ProjectDialog.cpp \
     IntegrateDataDialog.cpp \
     DiffLearnDialog.cpp \
-    WebPage.cpp
+    WebPage.cpp \
+    SettingManager.cpp \
+    SettingDialog.cpp
 
 HEADERS  += MainWindow.hpp \
     DataManager.hpp \
@@ -39,6 +41,8 @@ HEADERS  += MainWindow.hpp \
     ProjectDialog.hpp \
     IntegrateDataDialog.hpp \
     DiffLearnDialog.hpp \
-    WebPage.hpp
+    WebPage.hpp \
+    SettingManager.hpp \
+    SettingDialog.hpp
 
 FORMS    += MainWindow.ui

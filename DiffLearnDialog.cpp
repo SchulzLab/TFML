@@ -29,11 +29,11 @@ DiffLearnDialog::DiffLearnDialog
     QString title;
     if( mDiffType == DIFF_TYPE::DIFF ){
         mInputWidgetBox = createInputWidgets();
-        title = "Differentiate Learning";
+        title = "Identify discriminatory TFs";
     }
     else{
         mInputWidgetBox = createRegressionInputWidgets();
-        title = "Regression";
+        title = "Identify Key TFs";
     }
     mButtonBox = createButtons();
 
@@ -93,7 +93,7 @@ QGroupBox *DiffLearnDialog::createRegressionInputWidgets()
 {
     QGroupBox *box = new QGroupBox();
 
-    mNormalLabel = new QLabel( "Sample directory:" );
+    mNormalLabel = new QLabel( "Sample Directory:" );
     mOutputLabel = new QLabel( "Output Directory:" );
 
     mNormalEditor = new QLineEdit;

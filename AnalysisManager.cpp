@@ -62,7 +62,7 @@ void AnalysisManager::peakCalling
     }
     mProcessType = PROCESS_TYPE::PEAK_CALLING;
     mOutputPath = QDir::currentPath() + "/" + aOutputPath;
-    QString file = QDir::homePath() + '/JAMM-1.0.7.3/JAMM.sh';
+    QString file = "JAMM.sh";
     QString peakCallingCmd = "bash " + file + " " + aCmd;
     cout << peakCallingCmd.toStdString() << endl;
     mProcess->start( peakCallingCmd );

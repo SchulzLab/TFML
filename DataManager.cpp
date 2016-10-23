@@ -478,7 +478,7 @@ bool DataManager::loadProject
 
     file.close();
     return result;
-} // end of function DataManager::setActiveProject()
+} // end of function DataManager::loadProject()
 
 //---------------------------------------------------------------------------------
 //! Save project file

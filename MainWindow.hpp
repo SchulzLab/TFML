@@ -50,6 +50,8 @@ private slots:
 
     void handlePeakCallingClicked();
 
+    void handleSettingClicked();
+
     void handleTepicClicked();
 
     void readFile

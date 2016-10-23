@@ -10,6 +10,7 @@
 #include "MainWindow.hpp"
 #include "ui_MainWindow.h"
 #include "PeakCallingDialog.hpp"
+#include "SettingDialog.hpp"
 #include "ProjectDialog.hpp"
 #include "TepicDialog.hpp"
 #include "IntegrateDataDialog.hpp"
@@ -18,6 +19,7 @@
 #include <string>
 #include "DataManager.hpp"
 #include "AnalysisManager.hpp"
+#include "SettingManager.hpp"
 #include <QtWebEngineWidgets/QtWebEngineWidgets>
 #include "WebPage.hpp"
 
@@ -33,6 +35,7 @@ MainWindow::MainWindow
     : QMainWindow( parent )
     , mUi( new Ui::MainWindow )
 {
+    SettingManager::getSettingManager()->init();
     qInfo() << "MainWindow::MainWindow()";
     mUi->setupUi( this );
     createMenuBar();
@@ -79,20 +82,20 @@ void MainWindow::createMenuBar()
     // Tools Menu
     QAction *peakCallingAction = new QAction( tr( "&Peak Calling" ), this );
     QAction *tepicAction = new QAction( tr( "&TEPIC" ), this );
+    QAction *integrateAction = new QAction( "Integrate data", this );
     peakCallingAction->setShortcut( tr( "Ctrl+P" ) );
     tepicAction->setShortcut( tr( "Ctrl+T" ) );
 
-    QMenu *toolsMenu = mUi->mMenuBar->addMenu( tr( "&Tools" ) );
+    QMenu *toolsMenu = mUi->mMenuBar->addMenu( tr( "&Preprocessing" ) );
     toolsMenu->addAction( peakCallingAction );
     toolsMenu->addAction( tepicAction );
+    toolsMenu->addAction( integrateAction );
 
     // Analyze Menu
-    QAction *integrateAction = new QAction( "Integrate data", this );
-    QAction *diffAction = new QAction( "Differentiate learning", this );
-    QAction *regressionAction = new QAction( "Regression", this );
+    QAction *diffAction = new QAction( "Identify discriminatory TFs", this );
+    QAction *regressionAction = new QAction( "Identify Key TFs", this );
 
-    QMenu *analyzeMenu = mUi->mMenuBar->addMenu( "Analyze" );
-    analyzeMenu->addAction( integrateAction );
+    QMenu *analyzeMenu = mUi->mMenuBar->addMenu( tr( "&Analysis" ) );
     analyzeMenu->addAction( diffAction );
     analyzeMenu->addAction( regressionAction );
 
@@ -115,10 +118,14 @@ void MainWindow::createMenuBar()
     windowMenu->addAction( resultListAction );
     windowMenu->addAction( outputAction );
 
+    QMenu *settingMenu = mUi->mMenuBar->addMenu( tr( "&Settings" ) );
+    QAction *settingAction = new QAction( tr( "Settings" ), this );
+    settingMenu->addAction( settingAction );
+
     // Help Menu
     QAction *aboutQtAction = new QAction( tr( "About Qt" ), this );
     QMenu *helpMenu = mUi->mMenuBar->addMenu( tr( "&Help" ) );
-    helpMenu->addAction(aboutQtAction);
+    helpMenu->addAction( aboutQtAction );
 
     // Connect
     connect( newProject, SIGNAL( triggered( bool ) ), this, SLOT( newProject() ) );
@@ -145,6 +152,7 @@ void MainWindow::createMenuBar()
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), addDirAction, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), toolsMenu, SLOT( setEnabled( bool ) ) );
     connect( DataManager::getDataManager(), SIGNAL( hasActiveProject( bool ) ), analyzeMenu, SLOT( setEnabled( bool ) ) );
+    connect( settingAction, SIGNAL( triggered( bool ) ), this, SLOT( handleSettingClicked() ) );
 
 } // end of function MainWindow::createMenuBar()
 
@@ -697,3 +705,12 @@ void MainWindow::linkClicked
     mUi->mTabWidget->addTab( webView, name );
     mUi->mTabWidget->setCurrentIndex( mUi->mTabWidget->count() - 1 );
 } // end of function MainWindow::linkClicked()
+
+//---------------------------------------------------------------------------------
+//! Show setting dialog
+//---------------------------------------------------------------------------------
+void MainWindow::handleSettingClicked()
+{
+    SettingDialog *dialog = new SettingDialog();
+    dialog->exec();
+} // end of function MainWindow::handleSettingClicked()
