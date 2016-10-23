@@ -1,0 +1,21 @@
+# Key TFs report
+
+This is the report for key TFs report, and it is generated at `r Sys.time()`.
+
+## Regression performance
+This figure shows the result of Correlation, Spearman for each sample.
+
+![result](`r performanceFile`)
+
+## Result table
+This table shows the result of Correlation, Spearman for each sample.
+
+```{r, echo = FALSE}
+input = read.csv(sampleFile, header = TRUE, sep = ",")
+data = as.data.frame(input[, 2:6])
+kable(data,format = "markdown", digit = 10, row.names = FALSE, align = "l", pad = 2)
+```
+
+## Command 
+The command we used is as followed.<br />
+*`r cmd`*<br />

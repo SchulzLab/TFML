@@ -1,0 +1,52 @@
+# Identify discriminatory TFs report
+
+This is the report for identifying discriminatory TFs, and it is generated at `r Sys.time()`.
+
+## Accuracy
+This figure shows the accuracy and variance in training and testing set.
+
+![performance](`r performanceFile`)
+
+## Result of transcription factor 
+This figure shows the normalized scores of top 20 transcription factors. The scores in the figure are normalized to 0 to 1. The table lists the top 20 transcription factors according to the scores in  the second column. The third column is the link to Genecard.
+
+![TF](`r FeatureFile`)
+```{r, echo = FALSE}
+table = read.table(TfFile)
+rName = rownames(table)
+rTable = apply(table, 1, function(row) all(row != 0))
+index = which(rTable == TRUE, arr.ind = TRUE)
+rName = rName[index[-1]]
+data = data.frame(rName, table[index[-1],])
+data = data[which(data[, 2] != 0),]
+data$abs = abs(data[, 2])
+
+data = data[order(data[, 3], decreasing = TRUE)[1 : 20],]
+link = rep("http://www.genecards.org/cgi-bin/carddisp.pl?gene=", length(data[, 1]))
+geneLink = paste0("[", data[, 1], "](", link, data[, 1], ")")
+for(i in 1 : length(data[, 1])){
+	tfNameList = unlist(strsplit(as.character(data[i, 1]), "\\.\\."))
+	if(length(tfNameList) != 1){
+		geneLink[i] = ""
+		for(j in 1 : length(tfNameList)){
+			linkUrl = "http://www.genecards.org/cgi-bin/carddisp.pl?gene="
+			geneLink[i] = paste0(geneLink[i], "[", tfNameList[j], "](", linkUrl, tfNameList[j], ") ")
+		}
+	}
+}
+data[3] = geneLink
+colnames(data) = c("TF", "score", "link")
+kable(data, format = "markdown", digit = 10, row.names = FALSE, align = "l", pad = 2)
+```
+
+## Command 
+The command we used is as followed.<br />
+*`r cmd`*<br />
+Control class directory:
+*`r controlDir`*<br />
+Control file:
+*`r inputFileName1`*<br />
+Disease class directory:
+*`r diseaseDir`*<br />
+Disease file:
+*`r inputFileName2`*
