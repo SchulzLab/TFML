@@ -46,7 +46,7 @@ MainWindow::MainWindow
     connect( mUi->mTabWidget, SIGNAL( tabCloseRequested( int ) ), this, SLOT( closeTab( int ) ) );
     connect( DataManager::getDataManager(), SIGNAL( processFinished( QString ) ), this, SLOT( handleLogFinished( QString ) ) );
     mUi->textEdit->setAlignment(Qt::AlignCenter);
-    setWindowTitle( "Epigenetics analysis tool" );
+    setWindowTitle( "TFML" );
 } // end of function MainWindow::MainWindow()
 
 MainWindow::~MainWindow()

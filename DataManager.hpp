@@ -104,12 +104,12 @@ public:
         QString aDir
         );
 
+    void checkProjectHomeDir();
+
 private:
     DataManager();
 
     void getFilePath();
-
-    void checkProjectHomeDir();
 
     void updateDataList();
 
@@ -150,7 +150,7 @@ signals:
 // Variables
 //----------------------------------------------------------------
 public:
-    const QString cProjectHomeDir = "Epigenetics_project";
+    const QString cProjectHomeDir = "TFML_project";
 
 private:
     static DataManager* sDataManager;

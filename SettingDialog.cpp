@@ -44,17 +44,22 @@ QGroupBox *SettingDialog::createInputWidgets()
 
     mPeakCallLabel = new QLabel( "Peak Caller path:" );
     mTepicLabel = new QLabel( "TEPIC path:" );
+    mScriptLabel = new QLabel( "Script path:" );
 
     mPeakCallEditor = new QLineEdit;
     mTepicEditor = new QLineEdit;
+    mScriptEditor = new QLineEdit;
     mPeakCallEditor->setText( SettingManager::getSettingManager()->getPeakCaller() );
     mTepicEditor->setText( SettingManager::getSettingManager()->getTepic() );
+    mScriptEditor->setText( SettingManager::getSettingManager()->getScript() );
 
     mPeakCallButton = new QPushButton( "Select Directory" );
     mTepicButton = new QPushButton( "Select Directory" );
+    mScriptButton = new QPushButton( "Select Directory" );
 
     mPeakCallButton->setObjectName( "PeakCallButton" );
     mTepicButton->setObjectName( "TepicButton" );
+    mScriptButton->setObjectName( "ScriptButton" );
 
     QGridLayout *layout = new QGridLayout;
     layout->addWidget( mPeakCallLabel, 0, 0 );
@@ -65,8 +70,13 @@ QGroupBox *SettingDialog::createInputWidgets()
     layout->addWidget( mTepicEditor, 1, 1 );
     layout->addWidget( mTepicButton, 1, 2 );
 
+    layout->addWidget( mScriptLabel, 2, 0 );
+    layout->addWidget( mScriptEditor, 2, 1 );
+    layout->addWidget( mScriptButton, 2, 2 );
+
     connect( mPeakCallButton, SIGNAL( clicked() ), this, SLOT( selectDirectory() ) );
     connect( mTepicButton, SIGNAL( clicked() ), this, SLOT( selectDirectory() ) );
+    connect( mScriptButton, SIGNAL( clicked() ), this, SLOT( selectDirectory() ) );
 
     box->setLayout( layout );
 
@@ -98,7 +108,6 @@ QDialogButtonBox *SettingDialog::createButtons()
 void SettingDialog::selectDirectory()
 {
     QObject *senderObj = sender(); // This will give Sender object
-    // This will give obejct name for above it will give "A", "B", "C"
     QString senderObjName = senderObj->objectName();
 
     QLineEdit *edit;
@@ -107,6 +116,9 @@ void SettingDialog::selectDirectory()
     }
     else if( senderObjName == "TepicButton" ){
         edit = mTepicEditor;
+    }
+    else if( senderObjName == "ScriptButton" ){
+        edit = mScriptEditor;
     }
     QFileDialog *dialog = new QFileDialog();
     QString path = dialog->getOpenFileName( this, tr( "select path" ) );
@@ -124,5 +136,6 @@ void SettingDialog::handleClickOk()
 {
     SettingManager::getSettingManager()->setPeakCaller( mPeakCallEditor->text() );
     SettingManager::getSettingManager()->setPeakCaller( mTepicEditor->text() );
+    SettingManager::getSettingManager()->setPeakCaller( mScriptEditor->text() );
     SettingManager::getSettingManager()->save();
 } // end of function SettingDialog::ok()

@@ -33,12 +33,19 @@ public:
 
     QString getTepic();
 
+    QString getScript();
+
     void setPeakCaller
         (
         QString aPath
         );
 
     void setTepic
+        (
+        QString aPath
+        );
+
+    void setScript
         (
         QString aPath
         );
@@ -65,6 +72,8 @@ private:
     QString mPeakCallerPath;
 
     QString mTepicPath;
+
+    QString mScriptPath;
 };
 
 #endif // SETTINGMANAGER_H

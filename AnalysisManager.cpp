@@ -8,6 +8,7 @@
 *********************************************************************/
 
 #include "AnalysisManager.hpp"
+#include "SettingManager.hpp"
 #include <iostream>
 #include <string>
 #include <QMainWindow>
@@ -85,8 +86,8 @@ void AnalysisManager::tepic
         return;
     }
     mProcessType = PROCESS_TYPE::TEPIC;
-    mOutputPath = QDir::homePath() + "/TEPIC-1.0.0/Code/" + aOutputPath;
-    QString path = QDir::homePath() + "/TEPIC-1.0.0/Code";
+    mOutputPath = SettingManager::getSettingManager()->getTepic() + "/" + aOutputPath;
+    QString path = SettingManager::getSettingManager()->getTepic();
     QDir::setCurrent( path );
     QString tepicCmd = "bash TEPIC.sh " + aCmd;
     mProcess->start( tepicCmd );
@@ -139,11 +140,11 @@ void AnalysisManager::analyseBedFile
     QString cmd = "";
     QStringList fileSuffix = aFilePath.split( "." );
     if( fileSuffix.at( fileSuffix.size() - 1 ) == "bed" ){
-        QString file = QDir::homePath() + "/EpigeneticsTools/bed_detail.R";
+        QString file = SettingManager::getSettingManager()->getScript() + "/bed_detail.R";
         cmd = "Rscript " + file + " " + aFilePath;
     }
     else{
-        QString file = QDir::homePath() + "/EpigeneticsTools/peak.R";
+        QString file = SettingManager::getSettingManager()->getScript() + "/Scripts/peak.R";
         cmd = "Rscript " + file + " " + aFilePath;
     }
     QStringList path = aFilePath.split( "/" );
@@ -180,8 +181,8 @@ void AnalysisManager::integrateData
         return;
     }
     mProcessType = PROCESS_TYPE::INTEGRATE_DATA;
-    mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
-    QString path = QDir::homePath() + "/EpigeneticsTools";
+    mOutputPath = SettingManager::getSettingManager()->getScript() + "/" + aOutputPath;
+    QString path = SettingManager::getSettingManager()->getScript();
     QDir::setCurrent( path );
     QString integrateCmd = "bash ./generateM.sh '\"''\"'' '\"''\"' " + aCmd + " " + aOutputPath;
     qInfo() << integrateCmd;
@@ -205,8 +206,8 @@ void AnalysisManager::diffLearning
         return;
     }
     mProcessType = PROCESS_TYPE::DIFF_LEARNING;
-    mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
-    QString path = QDir::homePath() + "/EpigeneticsTools";
+    mOutputPath = SettingManager::getSettingManager()->getScript() + "/" + aOutputPath;
+    QString path = SettingManager::getSettingManager()->getScript();
     QDir::setCurrent( path );
     QString cmd = "Rscript diffLearning.R " + aCmd;
     qInfo() << cmd;
@@ -230,8 +231,8 @@ void AnalysisManager::regression
         return;
     }
     mProcessType = PROCESS_TYPE::REGRESSION;
-    mOutputPath = QDir::homePath() + "/EpigeneticsTools/" + aOutputPath;
-    QString path = QDir::homePath() + "/EpigeneticsTools";
+    mOutputPath = SettingManager::getSettingManager()->getScript() + "/" + aOutputPath;
+    QString path = SettingManager::getSettingManager()->getScript();
     QDir::setCurrent( path );
     QString cmd = "Rscript regression.R " + aCmd;
     qInfo() << cmd;

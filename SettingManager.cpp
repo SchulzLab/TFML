@@ -24,6 +24,7 @@ SettingManager::SettingManager() : QObject()
 {
     mTepicPath = "";
     mPeakCallerPath = "";
+    mScriptPath = "";
     qInfo() << qgetenv("PATH");
 } // end of function SettingManager::SettingManager()
 
@@ -60,6 +61,9 @@ void SettingManager::init()
     }
     if( mTepicPath == "" ){
         getTepic();
+    }
+    if( mScriptPath == "" ){
+        getScript();
     }
     save();
 
@@ -120,11 +124,39 @@ void SettingManager::setTepic
 } // end of function SettingManager::setTepic()
 
 //---------------------------------------------------------------------------------
+//! Get script path
+//---------------------------------------------------------------------------------
+QString SettingManager::getScript()
+{
+    QString path = qgetenv( "PATH" );
+    QStringList pathList = path.split(":");
+    for( int i = 0; i < pathList.length(); i++ ){
+        QString pathTmp = pathList.at( i );
+        if( pathTmp.contains( "TFML" ) && pathTmp.contains( "Scripts" )){
+            mScriptPath = pathTmp;
+        }
+    }
+    return mScriptPath;
+} // end of function SettingManager::getScript()
+
+//---------------------------------------------------------------------------------
+//! Set script path
+//---------------------------------------------------------------------------------
+void SettingManager::setScript
+    (
+    QString aPath
+    )
+{
+    mScriptPath = aPath;
+} // end of function SettingManager::setScript()
+
+//---------------------------------------------------------------------------------
 //! Save path
 //---------------------------------------------------------------------------------
 void SettingManager::save()
 {
-    QString settingFile = DataManager::getDataManager()->getProjectHomePath() + "/Setting.pro";
+    QString settingFile = DataManager::getDataManager()->getProjectHomePath() + "/Setting.txt";
+    DataManager::getDataManager()->checkProjectHomeDir();
     QFile file( settingFile );
     file.open( QIODevice::WriteOnly );
     QTextStream streamFileOut( &file );
@@ -133,6 +165,8 @@ void SettingManager::save()
     streamFileOut << mPeakCallerPath + "\n";
     streamFileOut << "TEPIC:\n";
     streamFileOut << mTepicPath + "\n";
+    streamFileOut << "Script:\n";
+    streamFileOut << mScriptPath + "\n";
     streamFileOut.flush();
     file.close();
 
@@ -147,6 +181,7 @@ void SettingManager::load()
     bool result = true;
     int peakCallIdx = 0;
     int tepicIdx = 0;
+    int scriptIdx = 0;
     int index = 0;
     QStringList textList;
     QFile file( settingFile );
@@ -164,13 +199,28 @@ void SettingManager::load()
         else if( line == "TEPIC:" ){
             tepicIdx = index;
         }
-
+        else if( line == "Script:" ){
+            scriptIdx = index;
+        }
         textList.append( line );
         index++;
     }
 
     mPeakCallerPath = textList.at( peakCallIdx + 1 );
-    mTepicPath = textList.at( tepicIdx + 1 );
-
+    if( mPeakCallerPath == "" ){
+        mPeakCallerPath = getPeakCaller();
+    }
+    if( tepicIdx != 0 ){
+        mTepicPath = textList.at( tepicIdx + 1 );
+    }
+    else{
+        mTepicPath = getTepic();
+    }
+    if( scriptIdx != 0 ){
+        mScriptPath = textList.at( scriptIdx + 1 );
+    }
+    else{
+        mScriptPath = getScript();
+    }
     file.close();
 } // end of function SettingManager::load()

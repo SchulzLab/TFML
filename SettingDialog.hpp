@@ -58,11 +58,14 @@ private:
 
     QLabel *mPeakCallLabel;
     QLabel *mTepicLabel;
+    QLabel *mScriptLabel;
 
     QLineEdit *mPeakCallEditor;
     QLineEdit *mTepicEditor;
+    QLineEdit *mScriptEditor;
 
     QPushButton *mPeakCallButton;
     QPushButton *mTepicButton;
+    QPushButton *mScriptButton;
 };
 #endif // SETTINGDIALOG_H
