@@ -78,8 +78,8 @@ then
 	tokens=(${TFA//// })
 	fileName=${tokens[${#tokens[@]}-1]}
 	fileNameTokens=(${fileName//_/ })
-	shortFileName=${fileNameTokens[0]}'_'${fileNameTokens[1]}'_'${fileNameTokens[2]}'_'${fileNameTokens[3]}
-	cat <(echo $header) <(join <(awk 'NR > 1 {print $1,$2}' $expression | sort -V) <(awk 'NR > 1' $TFA | sort -V) ) | sed 's/ /\t/g' > $output"/"$shortFileName'_'$tfaType'_'$(date "+%Y.%m.%d_%H.%M.%S")'.txt'
+	shortFileName=${fileNameTokens[0]}'_'${fileNameTokens[1]}'_'${fileNameTokens[3]}
+	cat <(echo $header) <(join <(awk 'NR > 1 {print $1,$2}' $expression | sort -V) <(awk 'NR > 1' $TFA | sort -V) ) | sed 's/ /\t/g' > $output"/"$shortFileName'.txt'
 else
 	header="$(paste <(awk '{print $1,$2}' $expression | head -1) <(awk 'NR==1{$1="";print}' $methyl))"
 	tokens=(${methyl//// })

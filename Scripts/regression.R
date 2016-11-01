@@ -16,14 +16,14 @@ if(!file.exists(outputName)){
 }
 print("Preprocessing done")
 print("Start regression")
-homePath = path.expand("~")
-outPath = paste0(homePath, "/EpigeneticsTools/", outputName)
+curDir = getwd()
+outPath = paste0(curDir, "/", outputName)
 cmd = paste0("Rscript HGSB_Regressor.R --outP=", outPath, " --dataDir=", args[1], " --out_var=", outVar, " --nworkers=10 --Alpha=0.01 --Testsize=0.2 --Nfolds=6 --TestCV=2 --model=C" )
 system(cmd)
 
 print("Generate report")
 library(knitr)
-outDir = paste0(homePath, "/EpigeneticsTools/", outputName)
+outDir = paste0(curDir, "/", outputName)
 sampleFile = paste0(outDir, "/Your_Regression_Result/Sample_View.csv")
 source("regressionPlots.R")
 

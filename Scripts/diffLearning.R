@@ -89,10 +89,6 @@ for(i in c(1 : rowLen)){
 	}
 }
 
-#####################################
-#It is for test, only take 100 genes.
-outData = outData[1:200,]
-#####################################
 dir = "tfRatio"
 if(file.exists(dir)){
 	unlink(dir, recursive = TRUE)
@@ -106,15 +102,15 @@ if(!file.exists(outputName)){
 }
 print("Preprocessing done")
 print("Start differentiate learning")
-homePath = path.expand("~")
-outPath = paste0(homePath, "/EpigeneticsTools/", outputName)
-dataDir = paste0(homePath, "/EpigeneticsTools/", dir)
-cmd = paste0("Rscript learnDifferential.R --outP=", outPath, " --dataDir=", dataDir, " --out_var=", outVar, " --nworkers=10 --Alpha=0.01 --Testsize=0.2 --Nfolds=6 --TestCV=2 --model=C")
+curDir = getwd()
+outPath = paste0(curDir, "/", outputName)
+dataDir = paste0(curDir, "/", dir)
+cmd = paste0("Rscript learnDifferential.R --outP=", outPath, " --dataDir=", dataDir, " --out_var=", outVar, " --nworkers=10 --Alpha=0.01 --Testsize=0.2 --Nfolds=6 --TestCV=1 --model=C")
 system(cmd)
 
 print("Generate report")
 library(knitr)
-outDir = paste0(homePath, "/EpigeneticsTools/", outputName)
+outDir = paste0(cur, "/", outputName)
 overviewFile = paste0(outDir, "/Sample_Overview.txt")
 TfFile = paste0(outDir, "/tfRatio.csv-Features_.txt")
 source("diffPlots.R")
