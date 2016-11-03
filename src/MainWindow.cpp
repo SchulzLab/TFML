@@ -36,7 +36,6 @@ MainWindow::MainWindow
     , mUi( new Ui::MainWindow )
 {
     SettingManager::getSettingManager()->init();
-    qInfo() << "MainWindow::MainWindow()";
     mUi->setupUi( this );
     createMenuBar();
     createFileListDock();

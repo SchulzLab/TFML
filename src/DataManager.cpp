@@ -27,7 +27,6 @@ DataManager* DataManager::sDataManager = NULL;
 //---------------------------------------------------------------------------------
 DataManager::DataManager() : QObject()
 {
-    cout << "DataManager()" << endl;
     fileNameList = new vector<string>();
     mProjectDir = "";
 } // end of function DataManager::DataManager()

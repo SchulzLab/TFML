@@ -132,7 +132,7 @@ QString SettingManager::getScript()
     QStringList pathList = path.split(":");
     for( int i = 0; i < pathList.length(); i++ ){
         QString pathTmp = pathList.at( i );
-        if( pathTmp.contains( "TFML" ) && pathTmp.contains( "Scripts" )){
+        if( pathTmp.contains( "TFML" ) && pathTmp.contains( "scripts" )){
             mScriptPath = pathTmp;
         }
     }
