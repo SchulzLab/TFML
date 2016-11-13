@@ -7,13 +7,58 @@ This figure shows the result of Correlation, Spearman for each sample.
 
 ![result](`r performanceFile`)
 
-## Result table
-This table shows the result of Correlation, Spearman for each sample.
+## Correlation table
+This table shows the result of Pearson correlation, Spearman for each sample.
 
 ```{r, echo = FALSE}
 input = read.csv(sampleFile, header = TRUE, sep = ",")
 data = as.data.frame(input[, 2:6])
 kable(data,format = "markdown", digit = 10, row.names = FALSE, align = "l", pad = 2)
+```
+
+## Key TF table
+```{r, results='asis', echo = FALSE}
+load(tfFile)
+len = length(Best_Gene_model_coefficients)
+sampleNum = len / cv
+
+for(index in 1:sampleNum){
+	tfData = data.frame(Best_Gene_model_coefficients[[(index - 1) * cv + 1]][, 1])
+	if(cv > 1){
+		for(i in 2:cv){
+			tfData[, i] = Best_Gene_model_coefficients[[(index - 1) * cv + i]][, 1]
+		}
+	}
+	tfData = tfData[-1, ]
+	tfData = head(tfData, -2)
+
+	data = tfData	
+	data = data[which(data[, 1] != 0),]
+	data$abs = abs(data[, 1])
+	data = data[order(data[, cv + 1], decreasing = TRUE)[1 : 20],]
+	tfTable = data.frame(rownames(data), data[, 1])
+	colnames(tfTable) = c("TF", "values")
+	for(i in 2:cv){
+		data = tfData	
+		data = data[which(data[, i] != 0),]
+		data$abs = abs(data[, i])
+		data = data[order(data[, cv + 1], decreasing = TRUE)[1 : 20],]
+		tfTable[, (i - 1) * 2 + 1] = rownames(data)
+		tfTable[, (i - 1) * 2 + 2] = data[, i]
+		colnames(tfTable)[(i - 1) * 2 + 1] = "TF"
+		colnames(tfTable)[(i - 1) * 2 + 2] = "values"
+
+	}
+	#prefix = rep("CV", cv)
+	#name = paste0(prefix, 1:cv)
+	#colnames(tfData) = name
+
+	cat("**")
+	cat(paste0("File: ", names(Best_Gene_model_coefficients)[index]))
+	cat("**")
+	print(kable(tfTable, format = "html", row.names = TRUE, align = "l", pad = 2))
+	cat("\n")
+}
 ```
 
 ## Command 
