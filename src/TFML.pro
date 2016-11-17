@@ -4,12 +4,12 @@
 #
 #-------------------------------------------------
 
-QT       += core gui
+
+TARGET = TFML
+TEMPLATE = app
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
-
-TARGET = TFML 
-TEMPLATE = app
+QT += core gui
 QT += webenginewidgets
 QT += sql widgets
 QT += xml widgets

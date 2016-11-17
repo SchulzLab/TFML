@@ -1,4 +1,3 @@
-#ifndef WEBPAGE_HPP
 /*********************************************************************
 *
 *   MODULE NAME:
@@ -7,6 +6,7 @@
 * Copyright 2016 by Tzung-Chien Hsieh.
 *
 *********************************************************************/
+#ifndef WEBPAGE_HPP
 #define WEBPAGE_HPP
 
 #include "QWebEnginePage"
