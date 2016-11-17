@@ -5,6 +5,7 @@
 
 ##Requirment
 In order to run TFML on a linux system, the following software must be available:
+* [Qt] (https://www.qt.io/download/), version greater than 5.4
 * [JAMM Peak Finder] (https://github.com/mahmoudibrahim/JAMM)
 * [TEPIC] (https://github.com/SchulzLab/TEPIC)
 
@@ -21,6 +22,11 @@ Download TFML from github. Then add the following directory into your $PATH.
 * export PATH=$PATH:path of TFML/scripts
 
 You can run command "echo $PATH" to check if the directory is added into $PATH correctly.
+
+Then, go to TFML/bin, execute following command.
+
+    qmake -config release -o Makefile ../src/TFML.pro
+    make
 
 ##Usage
 
