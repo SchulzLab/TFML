@@ -52,7 +52,7 @@ SettingManager* SettingManager::getSettingManager()
 //---------------------------------------------------------------------------------
 void SettingManager::init()
 {
-    if( !QFile( DataManager::getDataManager()->getProjectHomePath() + "/Setting.pro" ).exists() ){
+    if( !QFile( DataManager::getDataManager()->getProjectHomePath() + "/Setting.txt" ).exists() ){
         save();
     }
     load();
@@ -177,7 +177,7 @@ void SettingManager::save()
 //---------------------------------------------------------------------------------
 void SettingManager::load()
 {
-    QString settingFile = DataManager::getDataManager()->getProjectHomePath() + "/Setting.pro";
+    QString settingFile = DataManager::getDataManager()->getProjectHomePath() + "/Setting.txt";
     bool result = true;
     int peakCallIdx = 0;
     int tepicIdx = 0;

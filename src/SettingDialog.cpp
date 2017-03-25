@@ -120,8 +120,7 @@ void SettingDialog::selectDirectory()
     else if( senderObjName == "ScriptButton" ){
         edit = mScriptEditor;
     }
-    QFileDialog *dialog = new QFileDialog();
-    QString path = dialog->getOpenFileName( this, tr( "select path" ) );
+    QString path = QFileDialog::getExistingDirectory( this, tr( "select path" ), "/home", QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks );
 
     if( !path.isEmpty() ){
         edit->setText( path );
@@ -135,7 +134,8 @@ void SettingDialog::selectDirectory()
 void SettingDialog::handleClickOk()
 {
     SettingManager::getSettingManager()->setPeakCaller( mPeakCallEditor->text() );
-    SettingManager::getSettingManager()->setPeakCaller( mTepicEditor->text() );
-    SettingManager::getSettingManager()->setPeakCaller( mScriptEditor->text() );
+    SettingManager::getSettingManager()->setTepic( mTepicEditor->text() );
+    SettingManager::getSettingManager()->setScript( mScriptEditor->text() );
     SettingManager::getSettingManager()->save();
+    accept();
 } // end of function SettingDialog::ok()
