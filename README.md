@@ -11,9 +11,9 @@
 
 ## Requirements
 In order to run TFML on a linux system, the following software must be available:
-* [Qt] (https://www.qt.io/download/), version greater than 5.4
-* [JAMM Peak Finder] (https://github.com/mahmoudibrahim/JAMM)
-* [TEPIC] (https://github.com/SchulzLab/TEPIC)
+* [Qt](https://www.qt.io/download/), version greater than 5.4
+* [JAMM Peak Finder](https://github.com/mahmoudibrahim/JAMM)
+* [TEPIC](https://github.com/SchulzLab/TEPIC)
 
 After downloading the software, please also add the directory into your $PATH. Edit file "~/.bashrc" by adding the following lines.
 * export PATH=$PATH:path of JAMM
