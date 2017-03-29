@@ -2,8 +2,7 @@
 **T**ranscription **F**actor **M**achine **L**earning
 
 *TFML* is a software GUI that supports integrative analyses of open-chromatin and gene expression data with transcription factor predictions. In TFML, we provide workflows for:
-* peak calling from aligned DNAse1 read data using [JAMM]
-(https://github.com/mahmoudibrahim/JAMM)
+* peak calling from aligned DNAse1 read data using [JAMM](https://github.com/mahmoudibrahim/JAMM)
 * genome-wide annotation of regions (e.g. open-chromatin peaks or footprints) using TRAP
 * computation of TF-gene scores derived from [TEPIC](https://github.com/SchulzLab/TEPIC) annotations
 * prediction of **key TFs** for a given gene expression data set, which denotes TFs that are regulating many genes and thus capture their expression variability 
