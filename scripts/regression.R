@@ -17,17 +17,15 @@ if(!file.exists(outputName)){
 print("Preprocessing done")
 print("Start regression")
 curDir = getwd()
-outPath = paste0(curDir, "/", outputName)
-cv = 2
-cmd = paste0("Rscript HGSB_Regressor.R --outP=", outPath, " --dataDir=", args[1], " --out_var=", outVar, " --nworkers=10 --Alpha=0.01 --Testsize=0.2 --Nfolds=6 --TestCV=", cv, " --model=C" )
+outPath = paste0(curDir, "/", outputName, "/")
+cmd = paste0("Rscript HGSB_Regressor_Plus_RegulatorTrail.R --outDir=", outPath, " --dataDir=", args[1], "/ --response=", outVar)
 system(cmd)
 
 print("Generate report")
 outDir = paste0(curDir, "/", outputName)
-sampleFile = paste0(outDir, "/Your_Regression_Result/Sample_View.csv")
-tfFile = paste0(outDir, "/Your_Regression_Result/Gene_Best_model_coefficeint_ENET.rda")
+sampleFile = paste0(outDir, "/Performance_Overview.txt")
+#tfFile = paste0(outDir, "/", list.files(path=outDir, pattern = "Regression_Coefficients_Entire_DataSet"))
 source("regressionPlots.R")
-
 library(knitr)
 library(Matrix)
 knit2html("KeyTFsReport.Rmd")
