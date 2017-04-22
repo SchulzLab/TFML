@@ -91,6 +91,7 @@ void AnalysisManager::tepic
     QDir::setCurrent( path );
     QString tepicCmd = "bash TEPIC.sh " + aCmd;
     mProcess->start( tepicCmd );
+    qInfo() << tepicCmd;
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
     connect( mProcess, SIGNAL( finished( int, QProcess::ExitStatus ) ), this, SLOT( receiveFinished( int, QProcess::ExitStatus ) ), Qt::UniqueConnection );
 
@@ -184,7 +185,7 @@ void AnalysisManager::integrateData
     mOutputPath = SettingManager::getSettingManager()->getScript() + "/" + aOutputPath;
     QString path = SettingManager::getSettingManager()->getScript();
     QDir::setCurrent( path );
-    QString integrateCmd = "bash ./generateM.sh '\"''\"'' '\"''\"' " + aCmd + " " + aOutputPath;
+    QString integrateCmd = "python integrateData.py " + aCmd + " " + aOutputPath;
     qInfo() << integrateCmd;
     mProcess->start( integrateCmd );
     connect( mProcess, SIGNAL( readyReadStandardOutput() ), this, SLOT( updateText() ), Qt::UniqueConnection );
