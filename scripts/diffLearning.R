@@ -1,6 +1,5 @@
 ## Collect arguments
 args <- commandArgs(TRUE)
- 
 ## Default setting when no arguments passed
 if(length(args) < 1){
 	args <- c("--no input file")
@@ -105,7 +104,8 @@ print("Start differentiate learning")
 curDir = getwd()
 outPath = paste0(curDir, "/", outputName)
 dataDir = paste0(curDir, "/", dir)
-cmd = paste0("Rscript learnDifferential.R --outP=", outPath, " --dataDir=", dataDir, " --out_var=", outVar, " --nworkers=10 --Alpha=0.01 --Testsize=0.2 --Nfolds=6 --TestCV=1 --model=C")
+cmd = paste0("Rscript HGSB_Regressor_Differential_Plus.R --outDir=", outPath, " --dataDir=", dataDir, " --out_var=", outVar, " --alpha=0.01 --testsize=0.2 --cores=8 --Ofolds=2")
+#cmd = paste0("Rscript learnDifferential.R --outP=", outPath, " --dataDir=", dataDir, " --out_var=", outVar, " --nworkers=10 --Alpha=0.01 --Testsize=0.2 --Nfolds=6 --TestCV=1 --model=C")
 system(cmd)
 
 print("Generate report")
@@ -121,4 +121,4 @@ knit2html("DiscriminatoryReport.Rmd")
 htmlFile = paste0(outDir, "/DiscriminatoryReport.html")
 file.copy("DiscriminatoryReport.html", htmlFile, overwrite = TRUE)
 unlink( "DiscriminatoryReport.html")
-#After all result files are generated. We will copy the output dir from outPath to result dir under project dir. This step will be done by GUI.
+##After all result files are generated. We will copy the output dir from outPath to result dir under project dir. This step will be done by GUI.
